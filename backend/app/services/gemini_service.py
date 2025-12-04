@@ -10,7 +10,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 class GeminiService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-1.5-flash")
+        self.model = genai.GenerativeModel("gemini-2.0-flash-exp")
         self.context = self._load_context()
         self.system_prompt = self._create_system_prompt()
 
@@ -39,8 +39,8 @@ class GeminiService:
         return context
 
     def _create_system_prompt(self) -> str:
-        """Создание системного промпта с личностью LEIE"""
-        return f"""Ты - LEIE (リエ), дружелюбный 3D AI ассистент университета Japan Digital University (JDU). 
+        """Создание системного промпта с личностью LEIA"""
+        return f"""Ты - LEIA (レイア), дружелюбный 3D AI ассистент университета Japan Digital University (JDU). 
 
 ХАРАКТЕР:
 - Приветливая и дружелюбная
