@@ -19,15 +19,15 @@ export class VRMLoader {
         // Camera
         this.camera = new THREE.PerspectiveCamera(
             30,
-            window. innerWidth / window.innerHeight,
+            window.innerWidth / window.innerHeight,
             0.1,
             100
         );
-        this.camera.position. set(0, 1.3, 3);
+        this.camera.position.set(0, 1.3, 3);
         this.camera.lookAt(0, 1, 0);
         
         // Renderer
-        this. renderer = new THREE.WebGLRenderer({
+        this.renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true
         });
@@ -68,13 +68,13 @@ export class VRMLoader {
                     // Rotate model to face camera
                     this.vrm.scene.rotation.y = Math.PI;
                     
-                    this.scene.add(this.vrm. scene);
+                    this.scene.add(this.vrm.scene);
                     
                     console.log('VRM loaded:', this.vrm);
                     resolve(this.vrm);
                 },
                 (progress) => {
-                    console.log('Loading VRM:', (progress.loaded / progress.total * 100). toFixed(2) + '%');
+                    console.log('Loading VRM:', (progress.loaded / progress.total * 100).toFixed(2) + '%');
                 },
                 (error) => {
                     console.error('Error loading VRM:', error);
