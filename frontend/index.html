@@ -49,9 +49,16 @@
         </div>
     </div>
     
-    <!-- Three. js -->
-    <script src="https://unpkg.com/three@0.160.0/build/three.module.js" type="module"></script>
-    <script src="https://unpkg.com/@pixiv/three-vrm@2.1.0/lib/three-vrm.module.js" type="module"></script>
+    <!-- Import Map for Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+            "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@2.1.0/lib/three-vrm.module.js"
+        }
+    }
+    </script>
     
     <!-- App Scripts -->
     <script type="module" src="js/app.js"></script>
