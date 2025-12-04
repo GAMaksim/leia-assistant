@@ -5,13 +5,26 @@ from app.config import settings
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
+LANGUAGE_INSTRUCTIONS = {
+    "ru": "Отвечай ТОЛЬКО на русском языке.",
+    "uz": "Faqat o'zbek tilida javob ber. Javobni o'zbek tilida yoz.",
+    "en": "Reply ONLY in English language.",
+    "ja": "日本語のみで回答してください。必ず日本語で答えてください。"
+}
+
+LANGUAGE_NAMES = {
+    "ru": "русский",
+    "uz": "o'zbek",
+    "en": "English",
+    "ja": "日本語"
+}
+
 
 class GeminiService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel("gemini-2.0-flash-lite")
         self.context = self._load_context()
-        self.system_prompt = self._create_system_prompt()
 
     def _load_context(self) -> dict:
         context = {}
@@ -32,22 +45,26 @@ class GeminiService:
             context["staff"] = {}
         return context
 
-    def _create_system_prompt(self) -> str:
+    def _create_system_prompt(self, language: str) -> str:
         jdu_context = json.dumps(self.context.get("jdu", {}), ensure_ascii=False, indent=2)
         schedule_context = json.dumps(self.context.get("schedule", {}), ensure_ascii=False, indent=2)
         staff_context = json.dumps(self.context.get("staff", {}), ensure_ascii=False, indent=2)
         
-        prompt = """Ты - LEIA, дружелюбный 3D AI ассистент университета Japan Digital University (JDU).
+        lang_instruction = LANGUAGE_INSTRUCTIONS.get(language, LANGUAGE_INSTRUCTIONS["ru"])
+        lang_name = LANGUAGE_NAMES.get(language, "русский")
+        
+        prompt = f"""Ты - LEIA, дружелюбный 3D AI ассистент университета Japan Digital University (JDU).
+
+ВАЖНО - ЯЗЫК ОТВЕТА:
+{lang_instruction}
+Текущий язык общения: {lang_name}
+Ты ДОЛЖНА отвечать ТОЛЬКО на языке: {lang_name}
 
 ХАРАКТЕР:
 - Приветливая и дружелюбная
 - Умная и информативная
 - С легким чувством юмора
 - Всегда готова помочь
-
-ЯЗЫКИ:
-- Русский, Узбекский, Английский, Японский
-- Отвечай на том языке, на котором к тебе обращаются
 
 ЗАДАЧА:
 - Помогать студентам, сотрудникам и гостям JDU
@@ -60,21 +77,30 @@ class GeminiService:
 - Используй эмодзи умеренно
 
 КОНТЕКСТ JDU:
-""" + jdu_context + """
+{jdu_context}
 
 РАСПИСАНИЕ:
-""" + schedule_context + """
+{schedule_context}
 
 ПЕРСОНАЛ:
-""" + staff_context
+{staff_context}
+
+НАПОМИНАНИЕ: Отвечай ТОЛЬКО на {lang_name}!"""
         
         return prompt
 
     async def generate_response(self, message: str, language: str = "ru") -> str:
         try:
             chat = self.model.start_chat(history=[])
-            full_prompt = self.system_prompt + "\n\nПользователь: " + message
+            system_prompt = self._create_system_prompt(language)
+            full_prompt = system_prompt + "\n\nПользователь: " + message
             response = chat.send_message(full_prompt)
             return response.text
         except Exception as e:
-            return "Извините, произошла ошибка: " + str(e)
+            error_messages = {
+                "ru": "Извините, произошла ошибка. Попробуйте позже.",
+                "uz": "Kechirasiz, xatolik yuz berdi. Keyinroq urinib ko'ring.",
+                "en": "Sorry, an error occurred. Please try again later.",
+                "ja": "申し訳ありません、エラーが発生しました。後でもう一度お試しください。"
+            }
+            return error_messages.get(language, error_messages["ru"])}
