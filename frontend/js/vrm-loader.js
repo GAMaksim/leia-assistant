@@ -5,10 +5,10 @@ import { VRMLoaderPlugin } from '@pixiv/three-vrm';
 export class VRMLoader {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
-        this. scene = null;
-        this. camera = null;
+        this.scene = null;
+        this.camera = null;
         this.renderer = null;
-        this. vrm = null;
+        this.vrm = null;
         this.clock = new THREE.Clock();
     }
 
@@ -19,7 +19,7 @@ export class VRMLoader {
         // Camera
         this.camera = new THREE.PerspectiveCamera(
             30,
-            window. innerWidth / window. innerHeight,
+            window. innerWidth / window.innerHeight,
             0.1,
             100
         );
@@ -27,21 +27,21 @@ export class VRMLoader {
         this.camera.lookAt(0, 1, 0);
         
         // Renderer
-        this. renderer = new THREE. WebGLRenderer({
+        this. renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.outputColorSpace = THREE. SRGBColorSpace;
-        this. container.appendChild(this. renderer.domElement);
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        this.container.appendChild(this.renderer.domElement);
         
         // Lighting
-        const ambientLight = new THREE. AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         this.scene.add(ambientLight);
         
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight. position.set(1, 1, 1);
+        directionalLight.position.set(1, 1, 1);
         this.scene.add(directionalLight);
         
         const backLight = new THREE.DirectionalLight(0x7b2cbf, 0.3);
@@ -52,7 +52,7 @@ export class VRMLoader {
         window.addEventListener('resize', () => this.onResize());
         
         // Start animation loop
-        this. animate();
+        this.animate();
     }
 
     async loadModel(url) {
@@ -63,10 +63,10 @@ export class VRMLoader {
             loader.load(
                 url,
                 (gltf) => {
-                    this.vrm = gltf.userData. vrm;
+                    this.vrm = gltf.userData.vrm;
                     
                     // Rotate model to face camera
-                    this. vrm.scene.rotation.y = Math.PI;
+                    this.vrm.scene.rotation.y = Math.PI;
                     
                     this.scene.add(this.vrm. scene);
                     
@@ -87,11 +87,11 @@ export class VRMLoader {
     animate() {
         requestAnimationFrame(() => this.animate());
         
-        const delta = this.clock. getDelta();
+        const delta = this.clock.getDelta();
         
         // Update VRM
         if (this.vrm) {
-            this. vrm.update(delta);
+            this.vrm.update(delta);
         }
         
         this.renderer.render(this.scene, this.camera);
@@ -99,7 +99,7 @@ export class VRMLoader {
 
     onResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
-        this. camera.updateProjectionMatrix();
+        this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }

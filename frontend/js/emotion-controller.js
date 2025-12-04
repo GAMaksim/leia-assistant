@@ -31,13 +31,13 @@ export class EmotionController {
         };
         
         // Lip sync vowels
-        this. vowels = ['a', 'i', 'u', 'e', 'o'];
+        this.vowels = ['a', 'i', 'u', 'e', 'o'];
         this.currentVowel = null;
         this.isSpeaking = false;
     }
 
     setEmotion(emotion) {
-        if (! this.emotions[emotion]) {
+        if (!this.emotions[emotion]) {
             console.warn(`Emotion '${emotion}' not found`);
             return;
         }
@@ -45,7 +45,7 @@ export class EmotionController {
         console.log(`😊 Setting emotion: ${emotion}`);
         this.currentEmotion = emotion;
         
-        if (! this.vrm || !this.vrm.expressionManager) return;
+        if (!this.vrm || !this.vrm.expressionManager) return;
         
         // Reset all expressions
         this.resetExpressions();
@@ -58,7 +58,7 @@ export class EmotionController {
             this.vrm.expressionManager.setValue(emotionConfig.preset, 1.0);
         } catch (e) {
             // Fallback to blend shapes
-            for (const [shapeName, value] of Object.entries(emotionConfig. blendShapes)) {
+            for (const [shapeName, value] of Object.entries(emotionConfig.blendShapes)) {
                 try {
                     this.vrm.expressionManager.setValue(shapeName, value);
                 } catch (err) {
@@ -89,14 +89,14 @@ export class EmotionController {
 
     stopLipSync() {
         this.isSpeaking = false;
-        this. setVowel(null);
+        this.setVowel(null);
     }
 
     animateLipSync() {
         if (!this.isSpeaking) return;
         
         // Random vowel for simple lip sync
-        const vowel = this. vowels[Math. floor(Math.random() * this.vowels.length)];
+        const vowel = this.vowels[Math.floor(Math.random() * this.vowels.length)];
         this.setVowel(vowel);
         
         setTimeout(() => {
@@ -105,19 +105,19 @@ export class EmotionController {
     }
 
     setVowel(vowel) {
-        if (!this.vrm || !this. vrm.expressionManager) return;
+        if (!this.vrm || !this.vrm.expressionManager) return;
         
         // Reset all vowels
         this.vowels.forEach(v => {
             try {
-                this. vrm.expressionManager.setValue(v, 0);
+                this.vrm.expressionManager.setValue(v, 0);
             } catch (e) {}
         });
         
         // Set current vowel
         if (vowel) {
             try {
-                this. vrm.expressionManager.setValue(vowel, 0.8);
+                this.vrm.expressionManager.setValue(vowel, 0.8);
             } catch (e) {}
         }
     }
@@ -128,16 +128,16 @@ export class EmotionController {
     }
 
     blink() {
-        if (! this.vrm || !this.vrm.expressionManager) return;
+        if (!this.vrm || !this.vrm.expressionManager) return;
         
         // Close eyes
         try {
-            this. vrm.expressionManager.setValue('blink', 1);
+            this.vrm.expressionManager.setValue('blink', 1);
         } catch (e) {}
         
         setTimeout(() => {
             try {
-                this. vrm.expressionManager.setValue('blink', 0);
+                this.vrm.expressionManager.setValue('blink', 0);
             } catch (e) {}
             
             // Next blink in 2-5 seconds

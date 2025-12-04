@@ -27,7 +27,7 @@ class EmotionService:
 
     def analyze_emotion(self, text: str) -> str:
         """Анализ эмоции из текста"""
-        text_lower = text. lower()
+        text_lower = text.lower()
         
         # Проверка приветствия
         if any(word in text_lower for word in ["привет", "здравствуй", "hello", "hi", "салом"]):
@@ -38,7 +38,7 @@ class EmotionService:
             return "happy"
         
         # Проверка ключевых слов для каждой эмоции
-        for emotion, keywords in self. EMOTION_KEYWORDS. items():
+        for emotion, keywords in self.EMOTION_KEYWORDS.items():
             if any(keyword in text_lower for keyword in keywords):
                 return emotion
         
@@ -57,4 +57,4 @@ class EmotionService:
             "thinking": "thinking",
             "celebrating": "happy_jump"
         }
-        return context_animations. get(context, "idle")
+        return context_animations.get(context, "idle")

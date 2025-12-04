@@ -2,16 +2,16 @@ export class PresenceDetector {
     constructor(onDetected) {
         this.onDetected = onDetected;
         this.video = null;
-        this. canvas = null;
+        this.canvas = null;
         this.ctx = null;
-        this. previousFrame = null;
+        this.previousFrame = null;
         this.isActive = false;
         this.lastDetectionTime = 0;
-        this. detectionCooldown = 10000; // 10 seconds between greetings
+        this.detectionCooldown = 10000; // 10 seconds between greetings
         
         // Motion detection threshold
         this.motionThreshold = 30;
-        this. pixelChangeThreshold = 0.05; // 5% of pixels changed
+        this.pixelChangeThreshold = 0.05; // 5% of pixels changed
         
         this.init();
     }
@@ -21,15 +21,15 @@ export class PresenceDetector {
             // Create hidden video element
             this.video = document. createElement('video');
             this.video. setAttribute('autoplay', '');
-            this. video.setAttribute('playsinline', '');
+            this.video.setAttribute('playsinline', '');
             this.video.style.display = 'none';
             document.body.appendChild(this. video);
             
             // Create canvas for processing
             this.canvas = document.createElement('canvas');
             this.canvas.width = 320;
-            this. canvas.height = 240;
-            this.ctx = this.canvas. getContext('2d');
+            this.canvas.height = 240;
+            this.ctx = this.canvas.getContext('2d');
             
             // Request camera access
             const stream = await navigator. mediaDevices.getUserMedia({
@@ -37,15 +37,15 @@ export class PresenceDetector {
             });
             
             this.video.srcObject = stream;
-            this. isActive = true;
+            this.isActive = true;
             
             console.log('📷 Presence detector initialized');
             
             // Start detection loop
-            this. detectLoop();
+            this.detectLoop();
             
         } catch (error) {
-            console. warn('Presence detection not available:', error. message);
+            console.warn('Presence detection not available:', error.message);
         }
     }
 
@@ -53,7 +53,7 @@ export class PresenceDetector {
         if (!this.isActive) return;
         
         // Draw current frame
-        this. ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
         const currentFrame = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas. height);
         
         if (this.previousFrame) {
@@ -74,7 +74,7 @@ export class PresenceDetector {
 
     detectMotion(current, previous) {
         const data1 = current.data;
-        const data2 = previous. data;
+        const data2 = previous.data;
         let changedPixels = 0;
         const totalPixels = data1.length / 4;
         

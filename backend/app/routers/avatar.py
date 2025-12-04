@@ -49,5 +49,5 @@ async def play_animation(request: AnimationRequest):
     
     return AvatarResponse(
         status="ok",
-        current_state=request. animation
+        current_state=request.animation
     )
