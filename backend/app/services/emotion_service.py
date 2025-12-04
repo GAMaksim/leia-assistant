@@ -7,13 +7,13 @@ class EmotionService:
     EMOTIONS = ["happy", "sad", "thinking", "surprised", "excited", "neutral", "grateful", "agreeing"]
     
     EMOTION_KEYWORDS = {
-        "grateful": ["спасибо", "благодарю", "рахмат", "thank", "thanks", "ありがとう", "arigato"],
-        "agreeing": ["понял", "понятно", "хорошо", "ладно", "ok", "okay", "договорились", "ясно", "tushundim", "yaxshi", "わかりました", "了解"],
-        "happy": ["рад", "отлично", "прекрасно", "добро пожаловать", "happy", "great", "welcome"],
-        "sad": ["извини", "к сожалению", "не могу", "проблема", "sorry", "unfortunately"],
-        "thinking": ["думаю", "возможно", "наверное", "хм", "интересно", "let me think", "maybe", "hmm"],
-        "surprised": ["ого", "вау", "wow", "amazing", "incredible", "すごい"],
-        "excited": ["круто", "замечательно", "восхитительно", "ура", "супер", "awesome", "wonderful", "cool", "やった"],
+        "grateful": ["спасибо", "благодарю", "рахмат", "rahmat", "raxmat", "thank", "thanks", "ありがとう", "arigato"],
+        "agreeing": ["понял", "понятно", "хорошо", "ладно", "ok", "okay", "договорились", "ясно", "tushundim", "tushunarli", "yaxshi", "mayli", "わかりました", "了解"],
+        "happy": ["рад", "отлично", "прекрасно", "добро пожаловать", "happy", "great", "welcome", "xursand"],
+        "sad": ["извини", "к сожалению", "не могу", "проблема", "sorry", "unfortunately", "kechirasiz", "uzr"],
+        "thinking": ["думаю", "возможно", "наверное", "хм", "интересно", "let me think", "maybe", "hmm", "qiziq", "balki"],
+        "surprised": ["ого", "вау", "wow", "amazing", "incredible", "すごい", "voy", "ajoyib"],
+        "excited": ["круто", "замечательно", "восхитительно", "ура", "супер", "awesome", "wonderful", "cool", "やった", "zo'r", "super"],
     }
     
     ANIMATION_MAP = {
@@ -34,11 +34,11 @@ class EmotionService:
         text_lower = text.lower()
         
         # Проверка приветствия
-        if any(word in text_lower for word in ["привет", "здравствуй", "hello", "hi", "салом", "salom", "こんにちは"]):
+        if any(word in text_lower for word in ["привет", "здравствуй", "hello", "hi", "салом", "salom", "assalom", "こんにちは"]):
             return "greeting"
         
         # Проверка прощания
-        if any(word in text_lower for word in ["пока", "до свидания", "goodbye", "bye", "xayr", "さようなら"]):
+        if any(word in text_lower for word in ["пока", "до свидания", "goodbye", "bye", "xayr", "hayr", "さようなら"]):
             return "farewell"
         
         # Проверка ключевых слов для каждой эмоции (в порядке приоритета)
