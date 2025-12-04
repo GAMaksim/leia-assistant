@@ -103,4 +103,4 @@ class GeminiService:
                 "en": "Sorry, an error occurred. Please try again later.",
                 "ja": "申し訳ありません、エラーが発生しました。後でもう一度お試しください。"
             }
-            return error_messages.get(language, error_messages["ru"])}
+            return error_messages.get(language, error_messages["ru"])
