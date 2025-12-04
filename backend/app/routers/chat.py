@@ -28,8 +28,9 @@ async def chat(request: ChatRequest):
             language=request.language
         )
         
-        # Определяем эмоцию и анимацию
-        emotion = emotion_service.analyze_emotion(response)
+        # Определяем эмоцию и анимацию на основе СООБЩЕНИЯ ПОЛЬЗОВАТЕЛЯ
+        # Это позволяет правильно реагировать на "спасибо", "привет" и т.д.
+        emotion = emotion_service.analyze_emotion(request.message)
         animation = emotion_service.get_animation_for_emotion(emotion)
         
         return ChatResponse(
