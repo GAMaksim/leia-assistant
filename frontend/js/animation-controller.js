@@ -15,6 +15,9 @@ export class AnimationController {
             leftUpperArm: { z: 1.2 }
         };
         
+        // Базовая позиция hips для прыжка
+        this.baseHipsY = null;
+        
         this.states = {
             idle: { duration: -1 },
             greeting: { duration: 2000 },
@@ -35,8 +38,16 @@ export class AnimationController {
             nod: this.nodAnimation.bind(this)
         };
         
+        this.initBasePosition();
         this.startContinuousAnimations();
         this.playAnimation('idle');
+    }
+
+    initBasePosition() {
+        const hips = this.getBone('hips');
+        if (hips) {
+            this.baseHipsY = hips.position.y;
+        }
     }
 
     getBone(name) {
@@ -254,7 +265,12 @@ export class AnimationController {
     async happyJumpAnimation() {
         const rightUpperArm = this.getBone('rightUpperArm');
         const leftUpperArm = this.getBone('leftUpperArm');
-        const spine = this.getBone('spine');
+        const hips = this.getBone('hips');
+        
+        // Запомнить базовую позицию если еще не запомнили
+        if (hips && this.baseHipsY === null) {
+            this.baseHipsY = hips.position.y;
+        }
         
         // Поднять обе руки вверх
         if (rightUpperArm) this.animateBone(rightUpperArm, 'z', 1.0, 300);
@@ -262,14 +278,15 @@ export class AnimationController {
         
         await this.delay(300);
         
-        // Эффект прыжка через spine
-        if (spine) {
-            await this.animateBone(spine, 'x', -0.15, 150);
-            await this.animateBone(spine, 'x', 0.1, 100);
-            await this.animateBone(spine, 'x', 0, 150);
+        // Настоящий прыжок через hips.position.y
+        if (hips && this.baseHipsY !== null) {
+            // Прыжок вверх
+            await this.animatePosition(hips, 'y', this.baseHipsY + 0.15, 150);
+            // Приземление
+            await this.animatePosition(hips, 'y', this.baseHipsY, 200);
         }
         
-        await this.delay(200);
+        await this.delay(100);
         
         // Опустить руки в idle позу
         if (rightUpperArm) await this.animateBone(rightUpperArm, 'z', -1.2, 400);
@@ -294,6 +311,35 @@ export class AnimationController {
                 const easeProgress = 1 - Math.pow(1 - progress, 3);
                 
                 bone.rotation[axis] = startValue + (targetValue - startValue) * easeProgress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve();
+                }
+            };
+            
+            animate();
+        });
+    }
+
+    animatePosition(bone, axis, targetValue, duration) {
+        return new Promise((resolve) => {
+            if (!bone) {
+                resolve();
+                return;
+            }
+            
+            const startValue = bone.position[axis];
+            const startTime = Date.now();
+            
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Easing для прыжка
+                const easeProgress = 1 - Math.pow(1 - progress, 2);
+                
+                bone.position[axis] = startValue + (targetValue - startValue) * easeProgress;
                 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
