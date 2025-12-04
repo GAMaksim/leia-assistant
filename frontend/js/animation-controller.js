@@ -9,6 +9,12 @@ export class AnimationController {
         this.blinkingEnabled = true;
         this.idleMotionEnabled = true;
         
+        // Правильные значения для idle позы (руки вниз)
+        this.idlePose = {
+            rightUpperArm: { z: -1.2 },
+            leftUpperArm: { z: 1.2 }
+        };
+        
         this.states = {
             idle: { duration: -1 },
             greeting: { duration: 2000 },
@@ -129,11 +135,12 @@ export class AnimationController {
             if (bone) bone.rotation.set(0, 0, 0);
         });
         
+        // Установить правильную idle позу (руки вниз)
         const rightUpperArm = this.getBone('rightUpperArm');
         const leftUpperArm = this.getBone('leftUpperArm');
         
-        if (rightUpperArm) rightUpperArm.rotation.z = 0.3;
-        if (leftUpperArm) leftUpperArm.rotation.z = -0.3;
+        if (rightUpperArm) rightUpperArm.rotation.z = -1.2;
+        if (leftUpperArm) leftUpperArm.rotation.z = 1.2;
     }
 
     async waveAnimation() {
@@ -141,9 +148,11 @@ export class AnimationController {
         const rightLowerArm = this.getBone('rightLowerArm');
         
         if (rightUpperArm) {
-            await this.animateBone(rightUpperArm, 'z', -1.5, 400);
+            // Поднять руку для приветствия
+            await this.animateBone(rightUpperArm, 'z', 0.5, 400);
             await this.animateBone(rightUpperArm, 'x', 0.3, 200);
             
+            // Помахать
             for (let i = 0; i < 3; i++) {
                 if (rightLowerArm) {
                     await this.animateBone(rightLowerArm, 'y', 0.4, 150);
@@ -151,8 +160,10 @@ export class AnimationController {
                 }
             }
             
+            // Опустить руку в idle
             await this.animateBone(rightUpperArm, 'x', 0, 300);
-            await this.animateBone(rightUpperArm, 'z', 0.3, 400);
+            await this.animateBone(rightUpperArm, 'z', -1.2, 400);
+            if (rightLowerArm) rightLowerArm.rotation.y = 0;
         }
         
         this.currentState = 'idle';
@@ -204,8 +215,9 @@ export class AnimationController {
             await this.animateBone(head, 'z', 0.15, 400);
         }
         
+        // Рука к подбородку
         if (rightUpperArm && rightLowerArm) {
-            await this.animateBone(rightUpperArm, 'z', -0.5, 400);
+            await this.animateBone(rightUpperArm, 'z', -0.3, 400);
             await this.animateBone(rightUpperArm, 'x', 0.8, 300);
             await this.animateBone(rightLowerArm, 'x', 1.5, 300);
         }
@@ -215,10 +227,9 @@ export class AnimationController {
 
     async talkingAnimation() {
         const rightUpperArm = this.getBone('rightUpperArm');
-        const leftUpperArm = this.getBone('leftUpperArm');
         
         if (rightUpperArm) {
-            await this.animateBone(rightUpperArm, 'z', -0.5, 300);
+            await this.animateBone(rightUpperArm, 'z', -0.8, 300);
             await this.animateBone(rightUpperArm, 'x', 0.3, 200);
         }
         
@@ -230,7 +241,7 @@ export class AnimationController {
         const rightLowerArm = this.getBone('rightLowerArm');
         
         if (rightUpperArm) {
-            await this.animateBone(rightUpperArm, 'z', -1.2, 400);
+            await this.animateBone(rightUpperArm, 'z', 0, 400);
             await this.animateBone(rightUpperArm, 'x', 0.3, 300);
         }
         if (rightLowerArm) {
@@ -245,13 +256,13 @@ export class AnimationController {
         const leftUpperArm = this.getBone('leftUpperArm');
         const spine = this.getBone('spine');
         
-        // Raise both arms up
-        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -2.5, 300);
-        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', 2.5, 300);
+        // Поднять обе руки вверх
+        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', 1.0, 300);
+        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', -1.0, 300);
         
         await this.delay(300);
         
-        // Jump effect - bend and straighten spine
+        // Эффект прыжка через spine
         if (spine) {
             await this.animateBone(spine, 'x', -0.15, 150);
             await this.animateBone(spine, 'x', 0.1, 100);
@@ -260,9 +271,9 @@ export class AnimationController {
         
         await this.delay(200);
         
-        // Lower arms
-        if (rightUpperArm) await this.animateBone(rightUpperArm, 'z', 0.3, 400);
-        if (leftUpperArm) await this.animateBone(leftUpperArm, 'z', -0.3, 400);
+        // Опустить руки в idle позу
+        if (rightUpperArm) await this.animateBone(rightUpperArm, 'z', -1.2, 400);
+        if (leftUpperArm) await this.animateBone(leftUpperArm, 'z', 1.2, 400);
         
         this.currentState = 'idle';
     }
