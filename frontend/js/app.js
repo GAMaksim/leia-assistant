@@ -4,7 +4,7 @@ import { EmotionController } from './emotion-controller.js';
 import { SpeechHandler } from './speech-handler.js';
 import { PresenceDetector } from './presence-detector.js';
 
-class LEIEApp {
+class LEIAApp {
     constructor() {
         this.apiUrl = 'http://localhost:8000';
         this.currentLanguage = 'ru';
@@ -21,14 +21,14 @@ class LEIEApp {
     }
 
     async init() {
-        console.log('🚀 Initializing LEIA App.. .');
+        console.log('🚀 Initializing LEIA App...');
         
         // Update datetime
         this.updateDateTime();
-        setInterval(() => this. updateDateTime(), 1000);
+        setInterval(() => this.updateDateTime(), 1000);
         
         // Setup event listeners
-        this. setupEventListeners();
+        this.setupEventListeners();
         
         // Initialize VRM
         await this.initVRM();
@@ -39,11 +39,11 @@ class LEIEApp {
         // Initialize presence detector
         this.presenceDetector = new PresenceDetector((detected) => {
             if (detected) {
-                this. onUserDetected();
+                this.onUserDetected();
             }
         });
         
-        console.log('✅ LEIA App initialized! ');
+        console.log('✅ LEIA App initialized!');
         this.setStatus('Готов к общению');
     }
 
@@ -54,10 +54,10 @@ class LEIEApp {
             
             // Try to load VRM model
             try {
-                await this.vrmLoader. loadModel('models/leia.vrm');
+                await this.vrmLoader.loadModel('models/leia.vrm');
                 this.animationController = new AnimationController(this.vrmLoader.vrm);
                 this.emotionController = new EmotionController(this.vrmLoader.vrm);
-                console.log('✅ VRM model loaded! ');
+                console.log('✅ VRM model loaded!');
             } catch (e) {
                 console.log('ℹ️ VRM model not found, running in demo mode');
             }
@@ -69,11 +69,11 @@ class LEIEApp {
     setupEventListeners() {
         // Language buttons
         document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.setLanguage(btn. dataset.lang));
+            btn.addEventListener('click', () => this.setLanguage(btn.dataset.lang));
         });
         
         // Mic button
-        document. getElementById('mic-button').addEventListener('click', () => {
+        document.getElementById('mic-button').addEventListener('click', () => {
             this.toggleListening();
         });
         
@@ -83,7 +83,7 @@ class LEIEApp {
         });
         
         // Text input enter
-        document.getElementById('text-input'). addEventListener('keypress', (e) => {
+        document.getElementById('text-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.sendMessage();
             }
@@ -100,7 +100,7 @@ class LEIEApp {
             hour: '2-digit',
             minute: '2-digit'
         };
-        document.getElementById('datetime'). textContent = now.toLocaleDateString('ru-RU', options);
+        document.getElementById('datetime').textContent = now.toLocaleDateString('ru-RU', options);
     }
 
     setLanguage(lang) {
@@ -108,7 +108,7 @@ class LEIEApp {
         
         // Update UI
         document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.classList.toggle('active', btn. dataset.lang === lang);
+            btn.classList.toggle('active', btn.dataset.lang === lang);
         });
         
         // Update speech handler
@@ -122,15 +122,15 @@ class LEIEApp {
     toggleListening() {
         const micBtn = document.getElementById('mic-button');
         
-        if (this. isListening) {
+        if (this.isListening) {
             this.isListening = false;
-            micBtn. classList.remove('recording');
-            this.speechHandler?. stopListening();
+            micBtn.classList.remove('recording');
+            this.speechHandler?.stopListening();
             this.setStatus('Готов к общению');
         } else {
             this.isListening = true;
             micBtn.classList.add('recording');
-            this.setStatus('Слушаю.. .');
+            this.setStatus('Слушаю...');
             
             this.speechHandler?.startListening((text) => {
                 this.handleSpeechInput(text);
@@ -149,10 +149,10 @@ class LEIEApp {
         const input = document.getElementById('text-input');
         const message = input.value.trim();
         
-        if (! message) return;
+        if (!message) return;
         
         // Clear input
-        input. value = '';
+        input.value = '';
         
         // Add user message to chat
         this.addChatMessage(message, 'user');
@@ -171,28 +171,28 @@ class LEIEApp {
             const response = await this.chat(message);
             
             // Update emotion and animation
-            if (this. emotionController) {
+            if (this.emotionController) {
                 this.emotionController.setEmotion(response.emotion);
             }
             if (this.animationController) {
-                this.animationController.playAnimation(response. animation);
+                this.animationController.playAnimation(response.animation);
             }
             
             // Add assistant response
-            this. addChatMessage(response.response, 'assistant');
+            this.addChatMessage(response.response, 'assistant');
             this.showSubtitles(response.response);
             
             // Speak response
             if (this.speechHandler) {
-                this. speechHandler.speak(response.response);
+                this.speechHandler.speak(response.response);
             }
             
             this.setStatus('Готов к общению');
             
         } catch (error) {
             console.error('Chat error:', error);
-            this.addChatMessage('Извините, произошла ошибка.  Попробуйте позже.', 'assistant');
-            this. setStatus('Ошибка соединения');
+            this.addChatMessage('Извините, произошла ошибка. Попробуйте позже.', 'assistant');
+            this.setStatus('Ошибка соединения');
         }
     }
 
@@ -208,7 +208,7 @@ class LEIEApp {
             })
         });
         
-        if (! response.ok) {
+        if (!response.ok) {
             throw new Error('API request failed');
         }
         
@@ -244,7 +244,7 @@ class LEIEApp {
         
         // Play greeting animation
         if (this.animationController) {
-            this.animationController. playAnimation('wave');
+            this.animationController.playAnimation('wave');
         }
         if (this.emotionController) {
             this.emotionController.setEmotion('happy');
@@ -252,9 +252,9 @@ class LEIEApp {
         
         // Show greeting
         const greetings = {
-            'ru': 'Привет! Я LEIA, чем могу помочь? ',
+            'ru': 'Привет! Я LEIA, чем могу помочь?',
             'uz': 'Salom! Men LEIA, sizga qanday yordam bera olaman?',
-            'en': 'Hello! I\'m LEIA, how can I help you? ',
+            'en': 'Hello! I\u0027m LEIA, how can I help you?',
             'ja': 'こんにちは！LEIAです、何かお手伝いしましょうか？'
         };
         
@@ -268,5 +268,5 @@ class LEIEApp {
 
 // Start app
 window.addEventListener('DOMContentLoaded', () => {
-    window.leieApp = new LEIEApp();
+    window.leiaApp = new LEIAApp();
 });
