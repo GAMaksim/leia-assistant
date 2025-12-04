@@ -19,11 +19,11 @@ export class PresenceDetector {
     async init() {
         try {
             // Create hidden video element
-            this.video = document. createElement('video');
-            this.video. setAttribute('autoplay', '');
+            this.video = document.createElement('video');
+            this.video.setAttribute('autoplay', '');
             this.video.setAttribute('playsinline', '');
             this.video.style.display = 'none';
-            document.body.appendChild(this. video);
+            document.body.appendChild(this.video);
             
             // Create canvas for processing
             this.canvas = document.createElement('canvas');
@@ -32,7 +32,7 @@ export class PresenceDetector {
             this.ctx = this.canvas.getContext('2d');
             
             // Request camera access
-            const stream = await navigator. mediaDevices.getUserMedia({
+            const stream = await navigator.mediaDevices.getUserMedia({
                 video: { width: 320, height: 240 }
             });
             
@@ -54,7 +54,7 @@ export class PresenceDetector {
         
         // Draw current frame
         this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
-        const currentFrame = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas. height);
+        const currentFrame = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         
         if (this.previousFrame) {
             const motion = this.detectMotion(currentFrame, this.previousFrame);
@@ -97,7 +97,7 @@ export class PresenceDetector {
     stop() {
         this.isActive = false;
         if (this.video && this.video.srcObject) {
-            this.video.srcObject.getTracks(). forEach(track => track.stop());
+            this.video.srcObject.getTracks().forEach(track => track.stop());
         }
     }
 }
