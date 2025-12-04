@@ -27,6 +27,22 @@ export class EmotionController {
             neutral: {
                 preset: 'neutral',
                 blendShapes: { 'neutral': 1.0 }
+            },
+            greeting: {
+                preset: 'happy',
+                blendShapes: { 'happy': 1.0 }
+            },
+            farewell: {
+                preset: 'neutral',
+                blendShapes: { 'neutral': 0.8 }
+            },
+            grateful: {
+                preset: 'happy',
+                blendShapes: { 'happy': 0.8 }
+            },
+            agreeing: {
+                preset: 'happy',
+                blendShapes: { 'happy': 0.6 }
             }
         };
         
