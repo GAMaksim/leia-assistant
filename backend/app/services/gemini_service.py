@@ -9,7 +9,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 class GeminiService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-1.5-flash-latest")
+        self.model = genai.GenerativeModel("gemini-2.0-flash-lite")
         self.context = self._load_context()
         self.system_prompt = self._create_system_prompt()
 
