@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three@0. 160.0/build/three.module. js';
-import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
-import { VRMLoaderPlugin } from 'https://unpkg.com/@pixiv/three-vrm@2. 1.0/lib/three-vrm.module.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { VRMLoaderPlugin } from '@pixiv/three-vrm';
 
 export class VRMLoader {
     constructor(containerId) {
