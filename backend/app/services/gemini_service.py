@@ -4,13 +4,13 @@ import google.generativeai as genai
 from app.config import settings
 
 # Путь к данным
-DATA_DIR = os.path. join(os.path.dirname(__file__), ". .", "data")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 
 class GeminiService:
     def __init__(self):
-        genai.configure(api_key=settings. GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-pro")
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.model = genai.GenerativeModel("gemini-1.5-flash")
         self.context = self._load_context()
         self.system_prompt = self._create_system_prompt()
 
@@ -19,19 +19,19 @@ class GeminiService:
         context = {}
         
         try:
-            with open(os.path. join(DATA_DIR, "jdu_context.json"), "r", encoding="utf-8") as f:
+            with open(os.path.join(DATA_DIR, "jdu_context.json"), "r", encoding="utf-8") as f:
                 context["jdu"] = json.load(f)
         except FileNotFoundError:
             context["jdu"] = {}
 
         try:
-            with open(os.path. join(DATA_DIR, "schedule.json"), "r", encoding="utf-8") as f:
+            with open(os.path.join(DATA_DIR, "schedule.json"), "r", encoding="utf-8") as f:
                 context["schedule"] = json.load(f)
         except FileNotFoundError:
             context["schedule"] = {}
 
         try:
-            with open(os.path. join(DATA_DIR, "staff.json"), "r", encoding="utf-8") as f:
+            with open(os.path.join(DATA_DIR, "staff.json"), "r", encoding="utf-8") as f:
                 context["staff"] = json.load(f)
         except FileNotFoundError:
             context["staff"] = {}
@@ -63,7 +63,7 @@ class GeminiService:
 - Используй эмодзи умеренно
 
 КОНТЕКСТ JDU:
-{json.dumps(self.context. get('jdu', {}), ensure_ascii=False, indent=2)}
+{json.dumps(self.context.get('jdu', {}), ensure_ascii=False, indent=2)}
 
 РАСПИСАНИЕ:
 {json.dumps(self.context.get('schedule', {}), ensure_ascii=False, indent=2)}
