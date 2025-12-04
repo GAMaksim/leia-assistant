@@ -184,16 +184,35 @@ export class AnimationController {
         const spine = this.getBone('spine');
         const chest = this.getBone('chest');
         const head = this.getBone('head');
+        const neck = this.getBone('neck');
+        const rightUpperArm = this.getBone('rightUpperArm');
+        const leftUpperArm = this.getBone('leftUpperArm');
         
-        if (spine) await this.animateBone(spine, 'x', 0.4, 500);
-        if (chest) await this.animateBone(chest, 'x', 0.2, 300);
-        if (head) await this.animateBone(head, 'x', 0.1, 200);
+        // Японский поклон - руки прижаты к телу
+        // Сначала выпрямить руки вниз
+        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -0.3, 300);
+        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', 0.3, 300);
         
-        await this.delay(800);
+        await this.delay(200);
         
-        if (head) await this.animateBone(head, 'x', 0, 200);
-        if (chest) await this.animateBone(chest, 'x', 0, 300);
+        // Плавный наклон всего тела вперёд
+        if (spine) this.animateBone(spine, 'x', 0.25, 400);
+        if (chest) this.animateBone(chest, 'x', 0.15, 400);
+        if (neck) this.animateBone(neck, 'x', 0.1, 400);
+        if (head) await this.animateBone(head, 'x', 0.1, 400);
+        
+        // Задержка в поклоне
+        await this.delay(600);
+        
+        // Плавно вернуться в исходное положение
+        if (head) this.animateBone(head, 'x', 0, 400);
+        if (neck) this.animateBone(neck, 'x', 0, 400);
+        if (chest) this.animateBone(chest, 'x', 0, 400);
         if (spine) await this.animateBone(spine, 'x', 0, 500);
+        
+        // Вернуть руки в idle позу
+        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -1.2, 400);
+        if (leftUpperArm) await this.animateBone(leftUpperArm, 'z', 1.2, 400);
         
         this.currentState = 'idle';
     }
