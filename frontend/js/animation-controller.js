@@ -17,6 +17,7 @@ export class AnimationController {
         
         // Базовая позиция hips для прыжка
         this.baseHipsY = null;
+        this.baseHipsRotationX = 0;
         
         this.states = {
             idle: { duration: -1 },
@@ -47,6 +48,7 @@ export class AnimationController {
         const hips = this.getBone('hips');
         if (hips) {
             this.baseHipsY = hips.position.y;
+            this.baseHipsRotationX = hips.rotation.x;
         }
     }
 
@@ -75,13 +77,9 @@ export class AnimationController {
     }
 
     updateBreathing() {
-        const spine = this.getBone('spine');
         const chest = this.getBone('chest');
-        
-        const breathAmount = Math.sin(this.clock * 1.5) * 0.02;
-        
-        if (spine) spine.rotation.x = breathAmount;
-        if (chest) chest.rotation.x = breathAmount * 0.5;
+        const breathAmount = Math.sin(this.clock * 1.5) * 0.015;
+        if (chest) chest.rotation.x = breathAmount;
     }
 
     scheduleNextBlink() {
@@ -139,7 +137,7 @@ export class AnimationController {
 
     resetPose() {
         const bones = ['rightUpperArm', 'rightLowerArm', 'leftUpperArm', 'leftLowerArm', 
-                       'spine', 'chest', 'neck', 'head'];
+                       'spine', 'chest', 'neck', 'head', 'hips'];
         
         bones.forEach(boneName => {
             const bone = this.getBone(boneName);
@@ -181,34 +179,30 @@ export class AnimationController {
     }
 
     async bowAnimation() {
-        const spine = this.getBone('spine');
-        const chest = this.getBone('chest');
-        const head = this.getBone('head');
+        const hips = this.getBone('hips');
         const neck = this.getBone('neck');
+        const head = this.getBone('head');
         const rightUpperArm = this.getBone('rightUpperArm');
         const leftUpperArm = this.getBone('leftUpperArm');
         
-        // Японский поклон - руки прижаты к телу
-        // Сначала выпрямить руки вниз
-        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -0.3, 300);
-        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', 0.3, 300);
+        // Руки прижать к телу для японского поклона
+        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -0.5, 300);
+        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', 0.5, 300);
         
         await this.delay(200);
         
-        // Плавный наклон всего тела вперёд
-        if (spine) this.animateBone(spine, 'x', 0.25, 400);
-        if (chest) this.animateBone(chest, 'x', 0.15, 400);
-        if (neck) this.animateBone(neck, 'x', 0.1, 400);
-        if (head) await this.animateBone(head, 'x', 0.1, 400);
+        // Наклон через hips (основной наклон тела)
+        if (hips) this.animateBone(hips, 'x', -0.4, 500);
+        if (neck) this.animateBone(neck, 'x', -0.15, 500);
+        if (head) await this.animateBone(head, 'x', -0.15, 500);
         
         // Задержка в поклоне
-        await this.delay(600);
+        await this.delay(800);
         
-        // Плавно вернуться в исходное положение
-        if (head) this.animateBone(head, 'x', 0, 400);
-        if (neck) this.animateBone(neck, 'x', 0, 400);
-        if (chest) this.animateBone(chest, 'x', 0, 400);
-        if (spine) await this.animateBone(spine, 'x', 0, 500);
+        // Вернуться в исходное положение
+        if (head) this.animateBone(head, 'x', 0, 500);
+        if (neck) this.animateBone(neck, 'x', 0, 500);
+        if (hips) await this.animateBone(hips, 'x', 0, 600);
         
         // Вернуть руки в idle позу
         if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -1.2, 400);
@@ -219,11 +213,15 @@ export class AnimationController {
 
     async nodAnimation() {
         const head = this.getBone('head');
+        const neck = this.getBone('neck');
         
         if (head) {
             for (let i = 0; i < 2; i++) {
-                await this.animateBone(head, 'x', 0.2, 200);
-                await this.animateBone(head, 'x', 0, 200);
+                if (neck) this.animateBone(neck, 'x', -0.1, 150);
+                await this.animateBone(head, 'x', -0.2, 150);
+                
+                if (neck) this.animateBone(neck, 'x', 0, 150);
+                await this.animateBone(head, 'x', 0, 150);
             }
         }
         
