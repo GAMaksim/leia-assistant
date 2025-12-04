@@ -1,1 +1,1 @@
-# LEIE Assistant Backend
+# LEIA Assistant Backend
