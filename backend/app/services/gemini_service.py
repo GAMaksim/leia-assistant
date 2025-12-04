@@ -5,10 +5,11 @@ from app.config import settings
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
+
 class GeminiService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-1.5-flash")
+        self.model = genai.GenerativeModel("gemini-1.5-flash-latest")
         self.context = self._load_context()
         self.system_prompt = self._create_system_prompt()
 
@@ -32,12 +33,48 @@ class GeminiService:
         return context
 
     def _create_system_prompt(self) -> str:
-        return f'Ты - LEIA, дружелюбный 3D AI ассистент университета Japan Digital University (JDU). \nХАРАКТЕР: Приветливая и дружелюбная, умная и информативная.\nЯЗЫКИ: Русский, Узбекский, Английский, Японский - отвечай на том языке, на котором к тебе обращаются.\nЗАДАЧА: Помогать студентам, сотрудникам и гостям JDU.\nКОНТЕКСТ JDU: {json.dumps(self.context.get('jdu', {}), ensure_ascii=False, indent=2)}\nРАСПИСАНИЕ: {json.dumps(self.context.get('schedule', {}), ensure_ascii=False, indent=2)}\nПЕРСОНАЛ: {json.dumps(self.context.get('staff', {}), ensure_ascii=False, indent=2)}\n'\n
+        jdu_context = json.dumps(self.context.get("jdu", {}), ensure_ascii=False, indent=2)
+        schedule_context = json.dumps(self.context.get("schedule", {}), ensure_ascii=False, indent=2)
+        staff_context = json.dumps(self.context.get("staff", {}), ensure_ascii=False, indent=2)
+        
+        prompt = """Ты - LEIA, дружелюбный 3D AI ассистент университета Japan Digital University (JDU).
+
+ХАРАКТЕР:
+- Приветливая и дружелюбная
+- Умная и информативная
+- С легким чувством юмора
+- Всегда готова помочь
+
+ЯЗЫКИ:
+- Русский, Узбекский, Английский, Японский
+- Отвечай на том языке, на котором к тебе обращаются
+
+ЗАДАЧА:
+- Помогать студентам, сотрудникам и гостям JDU
+- Отвечать на вопросы о университете
+- Показывать расписание и информацию
+
+СТИЛЬ ОБЩЕНИЯ:
+- Дружелюбный, но профессиональный
+- Краткие и понятные ответы
+- Используй эмодзи умеренно
+
+КОНТЕКСТ JDU:
+""" + jdu_context + """
+
+РАСПИСАНИЕ:
+""" + schedule_context + """
+
+ПЕРСОНАЛ:
+""" + staff_context
+        
+        return prompt
+
     async def generate_response(self, message: str, language: str = "ru") -> str:
         try:
             chat = self.model.start_chat(history=[])
-            full_prompt = f'{self.system_prompt}\n\nПользователь: {message}'
+            full_prompt = self.system_prompt + "\n\nПользователь: " + message
             response = chat.send_message(full_prompt)
             return response.text
         except Exception as e:
-            return f'Извините, произошла ошибка: {str(e)}'
+            return "Извините, произошла ошибка: " + str(e)
