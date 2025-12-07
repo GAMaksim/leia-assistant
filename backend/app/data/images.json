@@ -1,0 +1,47 @@
+{
+    "campus": {
+        "url": "images/campus.jpg",
+        "keywords": {
+            "ru": ["кампус", "университет", "здание", "территория"],
+            "uz": ["kampus", "universitet", "bino"],
+            "en": ["campus", "university", "building"],
+            "ja": ["キャンパス", "大学", "建物"]
+        }
+    },
+    "room_101": {
+        "url": "images/room_101.jpg",
+        "keywords": {
+            "ru": ["101", "комната 101", "аудитория 101", "кабинет 101"],
+            "uz": ["101", "xona 101", "auditoriya 101"],
+            "en": ["101", "room 101", "classroom 101"],
+            "ja": ["101", "101号室", "教室101"]
+        }
+    },
+    "room_102": {
+        "url": "images/room_102.jpg",
+        "keywords": {
+            "ru": ["102", "комната 102", "аудитория 102"],
+            "uz": ["102", "xona 102"],
+            "en": ["102", "room 102"],
+            "ja": ["102", "102号室"]
+        }
+    },
+    "library": {
+        "url": "images/library.jpg",
+        "keywords": {
+            "ru": ["библиотека", "читальный зал"],
+            "uz": ["kutubxona"],
+            "en": ["library"],
+            "ja": ["図書館"]
+        }
+    },
+    "cafeteria": {
+        "url": "images/cafeteria.jpg",
+        "keywords": {
+            "ru": ["столовая", "кафетерий", "кафе"],
+            "uz": ["oshxona", "kafeteriya"],
+            "en": ["cafeteria", "canteen", "cafe"],
+            "ja": ["食堂", "カフェテリア"]
+        }
+    }
+}

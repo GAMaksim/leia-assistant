@@ -187,6 +187,34 @@ class LEIAApp {
         this.toggleListening();
     }
 
+    // Добавьте эти методы в класс LEIAApp
+
+showImage(imageUrl) {
+    const container = document.getElementById('image-display');
+    const img = document.getElementById('display-image');
+    
+    if (! container || !img) return;
+    
+    img.src = imageUrl;
+    container.classList.remove('hidden', 'hiding');
+    
+    console.log('🖼️ Showing image:', imageUrl);
+}
+
+hideImage() {
+    const container = document.getElementById('image-display');
+    if (!container) return;
+    
+    container.classList.add('hiding');
+    
+    setTimeout(() => {
+        container.classList.add('hidden');
+        container.classList.remove('hiding');
+    }, 300);
+    
+    console.log('🖼️ Image hidden');
+}
+
     async sendMessage() {
         const input = document.getElementById('text-input');
         const message = input.value.trim();
@@ -232,6 +260,12 @@ class LEIAApp {
             // Add assistant response
             this.addChatMessage(response.response, 'assistant');
             this.showSubtitles(response.response);
+
+            //  Показать изображение если есть
+            if (response.image) {
+                this.showImage(response.image);
+                setTimeout(() => this.hideImage(), 10000);
+            }       
             
             // Speak response and WAIT for it to finish
             this.setStatus('speaking');
@@ -239,7 +273,7 @@ class LEIAApp {
                 await this.speechHandler.speak(response.response);
             }
             
-            // ✅ ВАЖНО: После завершения речи - вернуть в idle
+            //  ВАЖНО: После завершения речи - вернуть в idle
             if (this.animationController) {
                 await this.animationController.returnToIdle();
             }
