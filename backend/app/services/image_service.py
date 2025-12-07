@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), ". .", "data")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 
 class ImageService:
