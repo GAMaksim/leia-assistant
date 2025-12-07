@@ -9,23 +9,13 @@ export class AnimationController {
         this.blinkingEnabled = true;
         this.idleMotionEnabled = true;
         
-        // Правильные значения для idle позы (руки вниз)
         this.idlePose = {
             rightUpperArm: { z: -1.2 },
             leftUpperArm: { z: 1.2 }
         };
         
-        // Базовая позиция hips для прыжка
         this.baseHipsY = null;
         this.baseHipsRotationX = 0;
-        
-        this.states = {
-            idle: { duration: -1 },
-            greeting: { duration: 2000 },
-            thinking: { duration: 3000 },
-            speaking: { duration: -1 },
-            pointing: { duration: 2000 }
-        };
         
         this.animations = {
             wave: this.waveAnimation.bind(this),
@@ -76,10 +66,15 @@ export class AnimationController {
         this.scheduleNextBlink();
     }
 
+    // 💨 Дыхание с GSAP-подобной плавностью
     updateBreathing() {
         const chest = this.getBone('chest');
-        const breathAmount = Math.sin(this.clock * 1.5) * 0.015;
+        const spine = this.getBone('spine');
+        const breathAmount = Math.sin(this.clock * 1.2) * 0.012;
+        const breathAmount2 = Math.sin(this.clock * 1.2 + 0.5) * 0.008;
+        
         if (chest) chest.rotation.x = breathAmount;
+        if (spine) spine.rotation.x = breathAmount2;
     }
 
     scheduleNextBlink() {
@@ -91,35 +86,66 @@ export class AnimationController {
         }, nextBlinkTime);
     }
 
+    // 👁️ Плавное моргание с GSAP
     async blink() {
-        if (!this.vrm || !this.vrm.expressionManager) return;
+        if (! this.vrm || !this.vrm.expressionManager) return;
         
         try {
-            this.vrm.expressionManager.setValue('blink', 1);
-            await this.delay(100);
-            this.vrm.expressionManager.setValue('blink', 0);
+            // Плавное закрытие глаз
+            gsap.to(this, {
+                duration: 0.08,
+                ease: "power2.in",
+                onUpdate: () => {
+                    const progress = gsap.getProperty(this, "blinkProgress") || 0;
+                    this.vrm.expressionManager.setValue('blink', progress);
+                },
+                blinkProgress: 1
+            });
+            
+            await this.delay(80);
+            
+            // Плавное открытие глаз
+            gsap.to(this, {
+                duration: 0.12,
+                ease: "power2.out",
+                onUpdate: () => {
+                    const progress = gsap.getProperty(this, "blinkProgress") || 1;
+                    this.vrm.expressionManager.setValue('blink', progress);
+                },
+                blinkProgress: 0
+            });
         } catch (e) {}
     }
 
+    // 🔄 Живое idle движение
     updateIdleMotion() {
         const head = this.getBone('head');
         const neck = this.getBone('neck');
+        const spine = this.getBone('spine');
         
-        const headSwayY = Math.sin(this.clock * 0.5) * 0.03;
-        const headSwayZ = Math.sin(this.clock * 0.3) * 0.02;
+        // Многослойное движение для естественности
+        const headSwayY = Math.sin(this.clock * 0.4) * 0.025;
+        const headSwayZ = Math.sin(this.clock * 0.25) * 0.015;
+        const headSwayX = Math.sin(this.clock * 0.3) * 0.01;
         
         if (head) {
             head.rotation.y = headSwayY;
             head.rotation.z = headSwayZ;
+            head.rotation.x = headSwayX;
         }
         
         if (neck) {
-            neck.rotation.y = headSwayY * 0.5;
+            neck.rotation.y = headSwayY * 0.4;
+            neck.rotation.x = Math.sin(this.clock * 0.35) * 0.008;
+        }
+        
+        if (spine) {
+            spine.rotation.y = Math.sin(this.clock * 0.2) * 0.01;
         }
     }
 
     playAnimation(name) {
-        if (!this.animations[name]) {
+        if (! this.animations[name]) {
             console.warn(`Animation '${name}' not found`);
             return;
         }
@@ -130,99 +156,259 @@ export class AnimationController {
     }
 
     transitionTo(state) {
-        if (this.states[state]) {
-            this.currentState = state;
-        }
+        this.currentState = state;
     }
 
+    // 🔄 Сброс позы с GSAP
     resetPose() {
         const bones = ['rightUpperArm', 'rightLowerArm', 'leftUpperArm', 'leftLowerArm', 
                        'spine', 'chest', 'neck', 'head', 'hips'];
         
         bones.forEach(boneName => {
             const bone = this.getBone(boneName);
-            if (bone) bone.rotation.set(0, 0, 0);
+            if (bone) {
+                gsap.to(bone.rotation, {
+                    x: 0, y: 0, z: 0,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            }
         });
         
-        // Установить правильную idle позу (руки вниз)
         const rightUpperArm = this.getBone('rightUpperArm');
         const leftUpperArm = this.getBone('leftUpperArm');
         
-        if (rightUpperArm) rightUpperArm.rotation.z = -1.2;
-        if (leftUpperArm) leftUpperArm.rotation.z = 1.2;
+        if (rightUpperArm) {
+            gsap.to(rightUpperArm.rotation, { z: -1.2, duration: 0.4, ease: "power2.out" });
+        }
+        if (leftUpperArm) {
+            gsap.to(leftUpperArm.rotation, { z: 1.2, duration: 0.4, ease: "power2.out" });
+        }
     }
 
+    // 👋 Приветствие с GSAP - живое и пружинящее
     async waveAnimation() {
         const rightUpperArm = this.getBone('rightUpperArm');
         const rightLowerArm = this.getBone('rightLowerArm');
+        const rightHand = this.getBone('rightHand');
         
-        if (rightUpperArm) {
-            // Поднять руку для приветствия
-            await this.animateBone(rightUpperArm, 'z', 0.5, 400);
-            await this.animateBone(rightUpperArm, 'x', 0.3, 200);
-            
-            // Помахать
-            for (let i = 0; i < 3; i++) {
-                if (rightLowerArm) {
-                    await this.animateBone(rightLowerArm, 'y', 0.4, 150);
-                    await this.animateBone(rightLowerArm, 'y', -0.4, 150);
-                }
+        if (!rightUpperArm) return;
+
+        // Поднять руку с пружинящим эффектом
+        gsap.to(rightUpperArm.rotation, {
+            z: 0.6,
+            x: 0.4,
+            duration: 0.5,
+            ease: "back.out(1.4)"
+        });
+        
+        await this.delay(400);
+        
+        // Помахать - живое движение
+        const waveTl = gsap.timeline();
+        
+        for (let i = 0; i < 3; i++) {
+            waveTl
+                .to(rightLowerArm?.rotation || {}, {
+                    y: 0.5,
+                    duration: 0.12,
+                    ease: "sine.inOut"
+                })
+                .to(rightLowerArm?.rotation || {}, {
+                    y: -0.5,
+                    duration: 0.12,
+                    ease: "sine.inOut"
+                });
+                
+            // Добавить движение кисти для естественности
+            if (rightHand) {
+                waveTl.to(rightHand.rotation, {
+                    z: 0.3,
+                    duration: 0.12,
+                    ease: "sine.inOut"
+                }, "<")
+                .to(rightHand.rotation, {
+                    z: -0.3,
+                    duration: 0.12,
+                    ease: "sine.inOut"
+                });
             }
-            
-            // Опустить руку в idle
-            await this.animateBone(rightUpperArm, 'x', 0, 300);
-            await this.animateBone(rightUpperArm, 'z', -1.2, 400);
-            if (rightLowerArm) rightLowerArm.rotation.y = 0;
         }
         
+        await waveTl;
+        
+        // Плавно опустить руку
+        gsap.to(rightUpperArm.rotation, {
+            x: 0,
+            z: -1.2,
+            duration: 0.6,
+            ease: "power2.inOut"
+        });
+        
+        if (rightLowerArm) {
+            gsap.to(rightLowerArm.rotation, {
+                y: 0,
+                duration: 0.4,
+                ease: "power2.out"
+            });
+        }
+        
+        if (rightHand) {
+            gsap.to(rightHand.rotation, {
+                z: 0,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        }
+        
+        await this.delay(600);
         this.currentState = 'idle';
     }
 
+    // 🙇 Поклон с GSAP - плавный японский стиль
     async bowAnimation() {
         const hips = this.getBone('hips');
+        const spine = this.getBone('spine');
+        const chest = this.getBone('chest');
         const neck = this.getBone('neck');
         const head = this.getBone('head');
         const rightUpperArm = this.getBone('rightUpperArm');
         const leftUpperArm = this.getBone('leftUpperArm');
         
-        // Руки прижать к телу для японского поклона
-        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -0.5, 300);
-        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', 0.5, 300);
+        // Руки прижать к телу
+        gsap.to(rightUpperArm?.rotation || {}, {
+            z: -0.3,
+            duration: 0.4,
+            ease: "power2.out"
+        });
+        gsap.to(leftUpperArm?.rotation || {}, {
+            z: 0.3,
+            duration: 0.4,
+            ease: "power2.out"
+        });
         
         await this.delay(200);
         
-        // Наклон через hips (основной наклон тела)
-        if (hips) this.animateBone(hips, 'x', -0.4, 500);
-        if (neck) this.animateBone(neck, 'x', -0.15, 500);
-        if (head) await this.animateBone(head, 'x', -0.15, 500);
+        // Плавный наклон всего тела
+        const bowTl = gsap.timeline();
         
-        // Задержка в поклоне
+        bowTl
+            .to(hips?.rotation || {}, {
+                x: -0.35,
+                duration: 0.7,
+                ease: "power2.inOut"
+            })
+            .to(spine?.rotation || {}, {
+                x: -0.1,
+                duration: 0.6,
+                ease: "power2.inOut"
+            }, "<0.1")
+            .to(chest?.rotation || {}, {
+                x: -0.1,
+                duration: 0.5,
+                ease: "power2.inOut"
+            }, "<0.1")
+            .to(neck?.rotation || {}, {
+                x: -0.15,
+                duration: 0.5,
+                ease: "power2.inOut"
+            }, "<0.1")
+            .to(head?.rotation || {}, {
+                x: -0.1,
+                duration: 0.5,
+                ease: "power2.inOut"
+            }, "<0.1");
+        
+        await bowTl;
         await this.delay(800);
         
-        // Вернуться в исходное положение
-        if (head) this.animateBone(head, 'x', 0, 500);
-        if (neck) this.animateBone(neck, 'x', 0, 500);
-        if (hips) await this.animateBone(hips, 'x', 0, 600);
+        // Подняться
+        const riseTl = gsap.timeline();
         
-        // Вернуть руки в idle позу
-        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', -1.2, 400);
-        if (leftUpperArm) await this.animateBone(leftUpperArm, 'z', 1.2, 400);
+        riseTl
+            .to(head?.rotation || {}, {
+                x: 0,
+                duration: 0.5,
+                ease: "power2.inOut"
+            })
+            .to(neck?.rotation || {}, {
+                x: 0,
+                duration: 0.5,
+                ease: "power2.inOut"
+            }, "<0.05")
+            .to(chest?.rotation || {}, {
+                x: 0,
+                duration: 0.5,
+                ease: "power2.inOut"
+            }, "<0.05")
+            .to(spine?.rotation || {}, {
+                x: 0,
+                duration: 0.6,
+                ease: "power2.inOut"
+            }, "<0.05")
+            .to(hips?.rotation || {}, {
+                x: 0,
+                duration: 0.7,
+                ease: "power2.inOut"
+            }, "<0.1");
         
+        await riseTl;
+        
+        // Вернуть руки
+        gsap.to(rightUpperArm?.rotation || {}, {
+            z: -1.2,
+            duration: 0.5,
+            ease: "power2.out"
+        });
+        gsap.to(leftUpperArm?.rotation || {}, {
+            z: 1.2,
+            duration: 0.5,
+            ease: "power2.out"
+        });
+        
+        await this.delay(500);
         this.currentState = 'idle';
     }
 
+    // 😊 Кивок с GSAP
     async nodAnimation() {
         const head = this.getBone('head');
         const neck = this.getBone('neck');
         
-        if (head) {
-            for (let i = 0; i < 2; i++) {
-                if (neck) this.animateBone(neck, 'x', -0.1, 150);
-                await this.animateBone(head, 'x', -0.2, 150);
-                
-                if (neck) this.animateBone(neck, 'x', 0, 150);
-                await this.animateBone(head, 'x', 0, 150);
-            }
+        if (!head) return;
+
+        for (let i = 0; i < 2; i++) {
+            const nodTl = gsap.timeline();
+            
+            nodTl
+                .to(head.rotation, {
+                    x: -0.2,
+                    duration: 0.15,
+                    ease: "power2.out"
+                })
+                .to(neck?.rotation || {}, {
+                    x: -0.08,
+                    duration: 0.15,
+                    ease: "power2.out"
+                }, "<")
+                .to(head.rotation, {
+                    x: 0.05,
+                    duration: 0.18,
+                    ease: "power2.inOut"
+                })
+                .to(neck?.rotation || {}, {
+                    x: 0,
+                    duration: 0.18,
+                    ease: "power2.inOut"
+                }, "<")
+                .to(head.rotation, {
+                    x: 0,
+                    duration: 0.12,
+                    ease: "power2.out"
+                });
+            
+            await nodTl;
+            await this.delay(100);
         }
         
         this.currentState = 'idle';
@@ -231,142 +417,207 @@ export class AnimationController {
     idleAnimation() {
         this.currentState = 'idle';
         this.resetPose();
-        console.log('Playing idle animation');
     }
 
+    // 🤔 Задумчивость с GSAP
     async thinkingAnimation() {
         const head = this.getBone('head');
+        const neck = this.getBone('neck');
         const rightUpperArm = this.getBone('rightUpperArm');
         const rightLowerArm = this.getBone('rightLowerArm');
+        const rightHand = this.getBone('rightHand');
         
-        if (head) {
-            await this.animateBone(head, 'z', 0.15, 400);
-        }
+        // Наклон головы
+        gsap.to(head?.rotation || {}, {
+            z: 0.15,
+            y: 0.1,
+            duration: 0.5,
+            ease: "power2.out"
+        });
         
-        // Рука к подбородку
-        if (rightUpperArm && rightLowerArm) {
-            await this.animateBone(rightUpperArm, 'z', -0.3, 400);
-            await this.animateBone(rightUpperArm, 'x', 0.8, 300);
-            await this.animateBone(rightLowerArm, 'x', 1.5, 300);
-        }
+        gsap.to(neck?.rotation || {}, {
+            z: 0.05,
+            duration: 0.5,
+            ease: "power2.out"
+        });
         
+        // Рука к подбородку - плавно
+        const thinkTl = gsap.timeline();
+        
+        thinkTl
+            .to(rightUpperArm?.rotation || {}, {
+                z: -0.2,
+                x: 0.9,
+                duration: 0.5,
+                ease: "power3.out"
+            })
+            .to(rightLowerArm?.rotation || {}, {
+                x: 1.6,
+                duration: 0.4,
+                ease: "power2.out"
+            }, "<0.1")
+            .to(rightHand?.rotation || {}, {
+                x: -0.3,
+                duration: 0.3,
+                ease: "power2.out"
+            }, "<0.1");
+        
+        await thinkTl;
         this.currentState = 'thinking';
     }
 
+    // 🗣️ Разговор
     async talkingAnimation() {
         const rightUpperArm = this.getBone('rightUpperArm');
+        const leftUpperArm = this.getBone('leftUpperArm');
         
-        if (rightUpperArm) {
-            await this.animateBone(rightUpperArm, 'z', -0.8, 300);
-            await this.animateBone(rightUpperArm, 'x', 0.3, 200);
-        }
+        gsap.to(rightUpperArm?.rotation || {}, {
+            z: -0.8,
+            x: 0.3,
+            duration: 0.4,
+            ease: "power2.out"
+        });
+        
+        gsap.to(leftUpperArm?.rotation || {}, {
+            z: 0.9,
+            x: 0.2,
+            duration: 0.4,
+            ease: "power2.out"
+        });
         
         this.currentState = 'talking';
     }
 
+    // 👆 Указание
     async pointingAnimation() {
         const rightUpperArm = this.getBone('rightUpperArm');
         const rightLowerArm = this.getBone('rightLowerArm');
+        const rightHand = this.getBone('rightHand');
         
-        if (rightUpperArm) {
-            await this.animateBone(rightUpperArm, 'z', 0, 400);
-            await this.animateBone(rightUpperArm, 'x', 0.3, 300);
-        }
-        if (rightLowerArm) {
-            await this.animateBone(rightLowerArm, 'x', 0.3, 300);
-        }
+        const pointTl = gsap.timeline();
         
+        pointTl
+            .to(rightUpperArm?.rotation || {}, {
+                z: 0.2,
+                x: 0.4,
+                duration: 0.4,
+                ease: "back.out(1.2)"
+            })
+            .to(rightLowerArm?.rotation || {}, {
+                x: 0.3,
+                duration: 0.3,
+                ease: "power2.out"
+            }, "<0.1")
+            .to(rightHand?.rotation || {}, {
+                x: 0.2,
+                duration: 0.2,
+                ease: "power2.out"
+            }, "<0.1");
+        
+        await pointTl;
         this.currentState = 'pointing';
     }
 
+    // 🎉 Радостный прыжок с GSAP - живой и упругий
     async happyJumpAnimation() {
         const rightUpperArm = this.getBone('rightUpperArm');
         const leftUpperArm = this.getBone('leftUpperArm');
         const hips = this.getBone('hips');
+        const head = this.getBone('head');
         
-        // Запомнить базовую позицию если еще не запомнили
         if (hips && this.baseHipsY === null) {
             this.baseHipsY = hips.position.y;
         }
         
-        // Поднять обе руки вверх
-        if (rightUpperArm) this.animateBone(rightUpperArm, 'z', 1.0, 300);
-        if (leftUpperArm) this.animateBone(leftUpperArm, 'z', -1.0, 300);
+        // Подготовка к прыжку - присесть
+        gsap.to(hips?.position || {}, {
+            y: this.baseHipsY - 0.05,
+            duration: 0.15,
+            ease: "power2.in"
+        });
+        
+        await this.delay(150);
+        
+        // Руки вверх + прыжок одновременно
+        const jumpTl = gsap.timeline();
+        
+        jumpTl
+            // Руки вверх с энтузиазмом
+            .to(rightUpperArm?.rotation || {}, {
+                z: 1.2,
+                x: 0.2,
+                duration: 0.25,
+                ease: "back.out(1.5)"
+            })
+            .to(leftUpperArm?.rotation || {}, {
+                z: -1.2,
+                x: 0.2,
+                duration: 0.25,
+                ease: "back.out(1.5)"
+            }, "<")
+            // Прыжок вверх
+            .to(hips?.position || {}, {
+                y: this.baseHipsY + 0.18,
+                duration: 0.2,
+                ease: "power2.out"
+            }, "<")
+            // Радостный наклон головы
+            .to(head?.rotation || {}, {
+                z: 0.1,
+                duration: 0.2,
+                ease: "power2.out"
+            }, "<");
+        
+        await jumpTl;
+        
+        // Приземление с отскоком
+        gsap.to(hips?.position || {}, {
+            y: this.baseHipsY - 0.03,
+            duration: 0.15,
+            ease: "power2.in"
+        });
+        
+        await this.delay(150);
+        
+        // Финальное выпрямление
+        gsap.to(hips?.position || {}, {
+            y: this.baseHipsY,
+            duration: 0.2,
+            ease: "bounce.out"
+        });
+        
+        gsap.to(head?.rotation || {}, {
+            z: 0,
+            duration: 0.3,
+            ease: "power2.out"
+        });
         
         await this.delay(300);
         
-        // Настоящий прыжок через hips.position.y
-        if (hips && this.baseHipsY !== null) {
-            // Прыжок вверх
-            await this.animatePosition(hips, 'y', this.baseHipsY + 0.15, 150);
-            // Приземление
-            await this.animatePosition(hips, 'y', this.baseHipsY, 200);
-        }
+        // Опустить руки плавно
+        gsap.to(rightUpperArm?.rotation || {}, {
+            z: -1.2,
+            x: 0,
+            duration: 0.5,
+            ease: "power2.inOut"
+        });
         
-        await this.delay(100);
+        gsap.to(leftUpperArm?.rotation || {}, {
+            z: 1.2,
+            x: 0,
+            duration: 0.5,
+            ease: "power2.inOut"
+        });
         
-        // Опустить руки в idle позу
-        if (rightUpperArm) await this.animateBone(rightUpperArm, 'z', -1.2, 400);
-        if (leftUpperArm) await this.animateBone(leftUpperArm, 'z', 1.2, 400);
-        
+        await this.delay(500);
         this.currentState = 'idle';
     }
 
-    animateBone(bone, axis, targetValue, duration) {
-        return new Promise((resolve) => {
-            if (!bone) {
-                resolve();
-                return;
-            }
-            
-            const startValue = bone.rotation[axis];
-            const startTime = Date.now();
-            
-            const animate = () => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const easeProgress = 1 - Math.pow(1 - progress, 3);
-                
-                bone.rotation[axis] = startValue + (targetValue - startValue) * easeProgress;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    resolve();
-                }
-            };
-            
-            animate();
-        });
-    }
-
-    animatePosition(bone, axis, targetValue, duration) {
-        return new Promise((resolve) => {
-            if (!bone) {
-                resolve();
-                return;
-            }
-            
-            const startValue = bone.position[axis];
-            const startTime = Date.now();
-            
-            const animate = () => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                // Easing для прыжка
-                const easeProgress = 1 - Math.pow(1 - progress, 2);
-                
-                bone.position[axis] = startValue + (targetValue - startValue) * easeProgress;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    resolve();
-                }
-            };
-            
-            animate();
-        });
+    // Вернуться в idle из любого состояния
+    async returnToIdle() {
+        this.resetPose();
+        await this.delay(500);
+        this.currentState = 'idle';
     }
 
     delay(ms) {

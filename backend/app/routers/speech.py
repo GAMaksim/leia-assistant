@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from pydantic import BaseModel
-from app. services.speech_service import SpeechService
+from app.services.speech_service import SpeechService
 
 router = APIRouter()
 speech_service = SpeechService()
@@ -39,7 +39,7 @@ async def text_to_speech(request: TTSRequest):
     """Преобразование текста в речь"""
     try:
         result = await speech_service.synthesize(
-            text=request. text,
+            text=request.text,
             language=request.language
         )
         return TTSResponse(
