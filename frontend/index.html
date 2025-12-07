@@ -1,13 +1,12 @@
-<!DOCTYPE html>
+<! DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LEIA - JDU Assistant</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- В head секции index.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- 3D Avatar Container -->
@@ -21,37 +20,42 @@
                 <span class="logo-text">LEIA</span>
                 <span class="logo-subtitle">JDU Assistant</span>
             </div>
+            
             <div id="datetime"></div>
-            <div id="language-selector">
-                <button class="lang-btn active" data-lang="ru">RU</button>
-                <button class="lang-btn" data-lang="uz">UZ</button>
-                <button class="lang-btn" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="ja">日本語</button>
+            
+            <!-- Language + Status вместе справа -->
+            <div class="header-right">
+                <div id="language-selector">
+                    <button class="lang-btn active" data-lang="ru">RU</button>
+                    <button class="lang-btn" data-lang="uz">UZ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ja">日本語</button>
+                </div>
+                
+                <div id="status-indicator">
+                    <span id="status-dot"></span>
+                    <span id="status-text">Готова</span>
+                </div>
             </div>
         </header>
         
-        <!-- Subtitles -->
+        <!-- Subtitles - центр экрана -->
         <div id="subtitles-container">
             <div id="subtitles"></div>
         </div>
         
-        <!-- Chat Input -->
+        <!-- Chat - слева внизу, компактный -->
         <div id="chat-container">
             <div id="chat-messages"></div>
             <div id="input-container">
                 <button id="mic-button" title="Говорить">🎤</button>
-                <input type="text" id="text-input" placeholder="Напишите сообщение...">
+                <input type="text" id="text-input" placeholder="Напишите сообщение... ">
                 <button id="send-button" title="Отправить">➤</button>
             </div>
         </div>
-        
-        <!-- Status Indicator -->
-        <div id="status-indicator">
-            <span id="status-dot"></span>
-            <span id="status-text">Готов к общению</span>
-        </div>
     </div>
-
+    
+    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <!-- Import Map for Three.js -->

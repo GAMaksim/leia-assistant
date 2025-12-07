@@ -30,11 +30,6 @@
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-full: 9999px;
-    
-    /* Тени */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
-    --shadow-glow: 0 0 30px var(--accent-glow);
 }
 
 body {
@@ -64,64 +59,77 @@ body {
     height: 100%;
     z-index: 10;
     pointer-events: none;
-    display: flex;
-    flex-direction: column;
 }
 
 #ui-overlay > * {
     pointer-events: auto;
 }
 
-/* ===== HEADER - Минималистичный ===== */
+/* ===== HEADER - Компактный ===== */
 #header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 32px;
+    padding: 16px 24px;
     background: transparent;
+    z-index: 100;
 }
 
 #logo {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
 }
 
 .logo-text {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--accent);
 }
 
 .logo-subtitle {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
     color: var(--text-muted);
     letter-spacing: 0.3px;
 }
 
 #datetime {
-    font-size: 13px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
     font-weight: 400;
     color: var(--text-secondary);
     letter-spacing: 0.2px;
 }
 
-/* ===== LANGUAGE SELECTOR - Минималистичный ===== */
+/* ===== HEADER RIGHT - Language + Status вместе ===== */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ===== LANGUAGE SELECTOR - Компактный ===== */
 #language-selector {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     background: var(--bg-glass);
-    padding: 4px;
+    padding: 3px;
     border-radius: var(--radius-full);
     border: 1px solid var(--border);
     backdrop-filter: blur(10px);
 }
 
 .lang-btn {
-    padding: 8px 16px;
-    font-size: 12px;
+    padding: 6px 12px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--text-secondary);
     background: transparent;
@@ -129,6 +137,7 @@ body {
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .lang-btn:hover {
@@ -139,18 +148,14 @@ body {
 .lang-btn.active {
     color: var(--text-primary);
     background: var(--accent);
-    box-shadow: 0 2px 10px var(--accent-glow);
 }
 
-/* ===== STATUS INDICATOR ===== */
+/* ===== STATUS INDICATOR - В header справа ===== */
 #status-indicator {
-    position: fixed;
-    top: 20px;
-    right: 32px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
+    gap: 6px;
+    padding: 6px 12px;
     background: var(--bg-glass);
     border: 1px solid var(--border);
     border-radius: var(--radius-full);
@@ -162,7 +167,6 @@ body {
     height: 6px;
     background: var(--success);
     border-radius: 50%;
-    box-shadow: 0 0 8px var(--success);
     animation: pulse 2s ease-in-out infinite;
 }
 
@@ -172,32 +176,174 @@ body {
 }
 
 #status-text {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-secondary);
     font-weight: 400;
 }
 
-/* ===== SUBTITLES ===== */
+/* ===== CHAT CONTAINER - Компактный, сбоку ===== */
+#chat-container {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    width: 320px;
+    max-width: calc(100vw - 48px);
+    z-index: 50;
+}
+
+/* ===== CHAT MESSAGES - Маленький и прозрачный ===== */
+#chat-messages {
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#chat-messages::-webkit-scrollbar {
+    display: none;
+}
+
+#chat-messages:empty {
+    display: none;
+}
+
+.chat-message {
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    line-height: 1.4;
+    animation: messageIn 0.3s ease;
+    max-width: 100%;
+}
+
+@keyframes messageIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message.user {
+    background: var(--accent);
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+    max-width: 85%;
+}
+
+.chat-message.assistant {
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    backdrop-filter: blur(10px);
+    max-width: 85%;
+}
+
+/* ===== INPUT CONTAINER - Минимальный ===== */
+#input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(20px);
+    transition: all 0.2s ease;
+}
+
+#input-container:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+#mic-button,
+#send-button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+#mic-button {
+    background: linear-gradient(135deg, var(--accent), #a855f7);
+    color: white;
+}
+
+#mic-button:hover {
+    transform: scale(1.05);
+}
+
+#mic-button.recording {
+    animation: recording 1s ease-in-out infinite;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+}
+
+@keyframes recording {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+#send-button {
+    background: var(--accent);
+    color: white;
+}
+
+#send-button:hover {
+    background: #7c3aed;
+}
+
+#text-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    min-width: 0;
+}
+
+#text-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===== SUBTITLES - Над input, центр ===== */
 #subtitles-container {
     position: fixed;
-    bottom: 140px;
+    bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 600px;
+    max-width: 500px;
     width: 90%;
     text-align: center;
     pointer-events: none;
+    z-index: 40;
 }
 
 #subtitles {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 10px 20px;
     background: var(--bg-glass);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     backdrop-filter: blur(20px);
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--text-primary);
     opacity: 0;
     transform: translateY(10px);
@@ -209,205 +355,42 @@ body {
     transform: translateY(0);
 }
 
-/* ===== CHAT CONTAINER - Минималистичный ===== */
-#chat-container {
-    position: fixed;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 520px;
-    padding: 0 20px;
-}
-
-#chat-messages {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 12px;
-    padding: 8px;
-    scrollbar-width: none;
-}
-
-#chat-messages::-webkit-scrollbar {
+#subtitles:empty {
     display: none;
-}
-
-.chat-message {
-    padding: 10px 16px;
-    margin-bottom: 8px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    line-height: 1.5;
-    animation: messageIn 0.3s ease;
-}
-
-@keyframes messageIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.chat-message.user {
-    background: var(--accent);
-    color: white;
-    margin-left: 20%;
-    text-align: right;
-}
-
-.chat-message.assistant {
-    background: var(--bg-glass);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    margin-right: 20%;
-    backdrop-filter: blur(10px);
-}
-
-/* ===== INPUT CONTAINER - Чистый минимализм ===== */
-#input-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-full);
-    backdrop-filter: blur(20px);
-    transition: all 0.2s ease;
-}
-
-#input-container:focus-within {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-glow);
-}
-
-#mic-button,
-#send-button {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 16px;
-}
-
-#mic-button {
-    background: linear-gradient(135deg, var(--accent), #a855f7);
-    color: white;
-    box-shadow: 0 2px 10px var(--accent-glow);
-}
-
-#mic-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 20px var(--accent-glow);
-}
-
-#mic-button.recording {
-    animation: recording 1s ease-in-out infinite;
-    background: linear-gradient(135deg, #ef4444, #f97316);
-}
-
-@keyframes recording {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-    50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-}
-
-#send-button {
-    background: var(--accent);
-    color: white;
-}
-
-#send-button:hover {
-    background: #7c3aed;
-    transform: scale(1.05);
-}
-
-#text-input {
-    flex: 1;
-    padding: 12px 16px;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text-primary);
-    font-size: 14px;
-}
-
-#text-input::placeholder {
-    color: var(--text-muted);
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     #header {
-        padding: 16px 20px;
-        flex-wrap: wrap;
-        gap: 12px;
+        padding: 12px 16px;
     }
     
     #datetime {
-        order: 3;
-        width: 100%;
-        text-align: center;
-    }
-    
-    #language-selector {
-        gap: 4px;
-        padding: 3px;
+        display: none;
     }
     
     .lang-btn {
-        padding: 6px 12px;
-        font-size: 11px;
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+    
+    #status-text {
+        display: none;
     }
     
     #chat-container {
-        max-width: 100%;
-        padding: 0 16px;
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+        width: auto;
     }
     
-    #status-indicator {
-        top: auto;
-        bottom: 100px;
-        right: 16px;
+    #chat-messages {
+        max-height: 80px;
     }
 }
 
-/* ===== SCROLLBAR (для chat) ===== */
-::-webkit-scrollbar {
-    width: 4px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--border-hover);
-}
-
-/* ===== УТИЛИТЫ ===== */
+/* ===== Скрыть пустые элементы ===== */
 .hidden {
     display: none ! important;
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }

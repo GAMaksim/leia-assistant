@@ -44,7 +44,7 @@ class LEIAApp {
         });
         
         console.log('✅ LEIA App initialized!');
-        this.setStatus('Готов к общению');
+        this.setStatus('Готова к общению');
     }
 
     async initVRM() {
@@ -126,7 +126,7 @@ class LEIAApp {
             this.isListening = false;
             micBtn.classList.remove('recording');
             this.speechHandler?.stopListening();
-            this.setStatus('Готов к общению');
+            this.setStatus('Готова к общению');
         } else {
             this.isListening = true;
             micBtn.classList.add('recording');
@@ -187,7 +187,7 @@ class LEIAApp {
                 this.speechHandler.speak(response.response);
             }
             
-            this.setStatus('Готов к общению');
+            this.setStatus('Готова к общению');
             
         } catch (error) {
             console.error('Chat error:', error);
@@ -252,7 +252,7 @@ class LEIAApp {
         
         // Show greeting
         const greetings = {
-            'ru': 'Привет! Я LEIA, чем могу помочь?',
+            'ru': 'Привет! Я ЛЕЯ, чем могу помочь?',
             'uz': 'Salom! Men LEIA, sizga qanday yordam bera olaman?',
             'en': 'Hello! I\u0027m LEIA, how can I help you?',
             'ja': 'こんにちは！LEIAです、何かお手伝いしましょうか？'
