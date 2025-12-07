@@ -97,6 +97,20 @@ class GeminiService:
             response = chat.send_message(full_prompt)
             return response.text
         except Exception as e:
+            print(f"❌ Gemini API Error: {type(e).__name__}: {e}")
+            
+            # ✅ Разные сообщения для разных ошибок
+            error_name = type(e).__name__
+            
+            if "ResourceExhausted" in str(e) or "429" in str(e):
+                quota_messages = {
+                    "ru": "Превышен лимит запросов.  Попробуйте через минуту.",
+                    "uz": "So'rovlar limiti oshib ketdi. Bir daqiqadan so'ng urinib ko'ring.",
+                    "en": "Rate limit exceeded. Please try again in a minute.",
+                    "ja": "リクエスト制限を超えました。1分後にお試しください。"
+                }
+                return quota_messages.get(language, quota_messages["ru"])
+            
             error_messages = {
                 "ru": "Извините, произошла ошибка. Попробуйте позже.",
                 "uz": "Kechirasiz, xatolik yuz berdi. Keyinroq urinib ko'ring.",
