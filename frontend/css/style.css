@@ -399,7 +399,7 @@ body {
 /* ===== IMAGE DISPLAY - Показ изображений СЛЕВА от LEIA ===== */
 #image-display {
     position: fixed;
-    left: 200px;              /* ✅ Слева, после чата */
+    left: 250px;              /* ✅ Слева, после чата */
     top: 50%;
     transform: translateY(-50%);
     z-index: 100;
