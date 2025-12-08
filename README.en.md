@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**🌍 Language / Язык / 言語**
+**🌍 Язык / Language / 言語**
 
 [![Russian](https://img.shields.io/badge/Русский-blue)](README.md)
 [![English](https://img.shields.io/badge/English-green)](README.en.md)
@@ -187,19 +187,19 @@ http://localhost:3000
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                     FRONTEND                         │
-│   ┌───────────┐  ┌───────────┐  ┌───────────┐      │
-│   │ Three.js  │  │    VRM    │  │   Web     │      │
-│   │  WebGL    │  │  Avatar   │  │  Speech   │      │
-│   └───────────┘  └───────────┘  └───────────┘      │
+│                     FRONTEND                        │
+│   ┌───────────┐  ┌───────────┐  ┌───────────┐       │
+│   │ Three.js  │  │    VRM    │  │   Web     │       │
+│   │  WebGL    │  │  Avatar   │  │  Speech   │       │
+│   └───────────┘  └───────────┘  └───────────┘       │
 └─────────────────────────┬───────────────────────────┘
                           │ REST API
 ┌─────────────────────────▼───────────────────────────┐
-│                     BACKEND                          │
-│   ┌───────────┐  ┌───────────┐  ┌───────────┐      │
-│   │  FastAPI  │  │  Gemini   │  │  Context  │      │
-│   │  Python   │  │    AI     │  │   Data    │      │
-│   └───────────┘  └───────────┘  └───────────┘      │
+│                     BACKEND                         │
+│   ┌───────────┐  ┌───────────┐  ┌───────────┐       │
+│   │  FastAPI  │  │  Gemini   │  │  Context  │       │
+│   │  Python   │  │    AI     │  │   Data    │       │
+│   └───────────┘  └───────────┘  └───────────┘       │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -355,7 +355,7 @@ MIT License — see [LICENSE](LICENSE)
 
 **⭐ Star this repo if you like it!**
 
-[![GitHub stars](https://img.shields.io/github/stars/GAMaksim/leia-assistant? style=social)](https://github.com/GAMaksim/leia-assistant)
+[![GitHub stars](https://img.shields.io/github/stars/GAMaksim/leia-assistant?style=social)](https://github.com/GAMaksim/leia-assistant)
 
 ---
 
