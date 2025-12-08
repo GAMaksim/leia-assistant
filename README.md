@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![LEIA Banner](frontend/images/campus.jpg)
+![LEIA Banner](frontend/images/leia.jpg)
 
 **3D AI-ассистент для Japan Digital University**
 
