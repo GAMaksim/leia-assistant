@@ -250,7 +250,7 @@ leia-assistant/
 │   ├── models/
 │   │   └── leia.vrm
 │   └── index.html
-├── presentation.md          # 📊 Презентация для инвесторов
+├── presentation.md          
 ├── LICENSE
 └── README.md
 ```
