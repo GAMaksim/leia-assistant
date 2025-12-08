@@ -1,4 +1,4 @@
-# 🤖 LEIA Assistant
+#    LEIA Assistant
 
 <div align="center">
 
