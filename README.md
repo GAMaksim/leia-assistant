@@ -286,7 +286,7 @@ leia-assistant/
 
 ## 👨‍💻 Автор
 
-**[Ваше имя]**
+**[Maksym]**
 
 - GitHub: [@GAMaksim](https://github.com/GAMaksim)
 - University: Japan Digital University
