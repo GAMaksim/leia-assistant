@@ -2,6 +2,14 @@
 
 <div align="center">
 
+**🌍 Language / Язык / 言語**
+
+[![Russian](https://img.shields.io/badge/Русский-blue)](README.md)
+[![English](https://img.shields.io/badge/English-green)](README.en.md)
+[![Japanese](https://img.shields.io/badge/日本語-red)](README.ja.md)
+
+---
+
 ![LEIA](frontend/images/leia.jpg)
 
 **3D Living AI Assistant для Japan Digital University**
