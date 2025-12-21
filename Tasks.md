@@ -2,11 +2,11 @@
 
 ## 🎯 Цель проекта
 
-**LEIA (AIDE)** — 3D голографический живой AI-ассистент для Japan Digital University с эффектом Pepper's Ghost. 
+**LEIA (AIDE)** — 3D голографический живой AI-ассистент для Japan Digital University с эффектом Pepper's Ghost.
 
 ---
 
-## 📊 Текущий статус:  MVP 85%
+## 📊 Текущий статус:  MVP 90%
 
 ### ✅ Сделано
 
@@ -22,6 +22,10 @@
 | Изображения | ✅ Done | Показ фото по запросу |
 | UI | ✅ Done | Адаптивный веб-интерфейс |
 | Документация | ✅ Done | README (RU/EN/JP), Презентация |
+| Взгляд за курсором | ✅ Done | Голова следит за мышкой |
+| Микро-анимации | ✅ Done | Случайные движения в idle |
+| Непрерывный диалог | ✅ Done | STT → AI → TTS цикл |
+| Плавные эмоции | ✅ Done | Переходы между эмоциями |
 
 ### 🔄 В процессе
 
@@ -46,8 +50,11 @@
 │  ✅ Эмоции/Анимации    🔲 JDU интеграции     🔲 Масштабирование  │
 │  ✅ Gemini AI          🔲 Аналитика          🔲 Новые клиенты    │
 │  ✅ 4 языка            🔲 Память/Контекст    🔲 Международный    │
-│  🔲 Локальный LLM      🔲 Natural Voice      🔲 Монетизация      │
-│  🔲 Живая модель       🔲 JARVIS-lite        🔲 Premium          │
+│  ✅ Взгляд за курсором 🔲 Natural Voice      🔲 Монетизация      │
+│  ✅ Микро-анимации     🔲 JARVIS-lite        🔲 Premium          │
+│  ✅ Непрерывный диалог                                          │
+│  ✅ Плавные эмоции                                              │
+│  🔲 Локальный LLM                                               │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -70,7 +77,7 @@
 **Решение:** Гибридная архитектура — облако + локальный fallback
 
 **Подзадачи:**
-- [ ] Установить `@xenova/transformers`
+- [ ] Выбрать подходящую локальную модель
 - [ ] Создать `AIService` с fallback логикой
 - [ ] Тестировать переключение cloud ↔ local
 - [ ] Добавить индикатор режима в UI
@@ -88,19 +95,19 @@
 | **Приоритет** | 🔴 P0 |
 | **Сложность** | 🟢 Easy |
 | **Время** | 1 день |
-| **Статус** | ⬜ To Do |
+| **Статус** | ✅ Done |
 
 **Цель:** STT → AI → TTS без кликов (как Siri/Alexa)
 
 **Подзадачи:**
-- [ ] Создать `ConversationLoop` класс
-- [ ] Добавить кнопку "Начать диалог" в UI
-- [ ] Настроить определение тишины (2 сек)
-- [ ] Добавить визуальную индикацию состояния
+- [x] Создать `ConversationLoop` класс
+- [x] Добавить кнопку "Начать диалог" в UI
+- [x] Настроить определение тишины
+- [x] Добавить визуальную индикацию состояния
 
 **Файлы:**
-- `frontend/js/conversation-loop.js` (новый)
-- `frontend/index.html` (обновить)
+- `frontend/js/conversation-loop.js` ✅
+- `frontend/index.html` ✅
 
 ---
 
@@ -141,18 +148,19 @@
 | **Приоритет** | 🟠 P1 |
 | **Сложность** | 🟢 Easy |
 | **Время** | 0.5 дня |
-| **Статус** | ⬜ To Do |
+| **Статус** | ✅ Done |
 
 **Эффект:** Модель "следит" глазами и головой за курсором — сразу оживляет! 
 
 **Подзадачи:**
-- [ ] Создать `LookAtController`
-- [ ] Интегрировать в animation loop
-- [ ] Добавить плавность (lerp)
-- [ ] Отключать при анимациях
+- [x] Создать `LookAtController`
+- [x] Интегрировать в animation loop
+- [x] Добавить плавность (lerp)
+- [x] Применять ПОСЛЕ анимаций (vrm-loader.js)
 
 **Файлы:**
-- `frontend/js/look-at-controller.js` (новый)
+- `frontend/js/look-at-controller.js` ✅
+- `frontend/js/vrm-loader.js` ✅ (обновлён)
 
 ---
 
@@ -163,25 +171,26 @@
 | **Приоритет** | 🟠 P1 |
 | **Сложность** | 🟢 Easy |
 | **Время** | 1 день |
-| **Статус** | ⬜ To Do |
+| **Статус** | ✅ Done |
 
 **Эффект:** Случайные мелкие движения делают модель "живой"
 
-**Мини-жесты:**
-- Поправить волосы
-- Наклон головы
-- Перенос веса
-- Маленький кивок
-- Посмотреть по сторонам
+**Мини-жесты реализованы:**
+- ✅ tiltHead (наклон головы)
+- ✅ shiftWeight (перенос веса)
+- ✅ smallNod (маленький кивок)
+- ✅ lookAround (посмотреть по сторонам)
+- ✅ shoulderRoll (движение плечами)
+- ✅ headTurn (поворот головы)
 
 **Подзадачи:**
-- [ ] Создать `MicroAnimations` класс
-- [ ] Реализовать 5+ мини-жестов
-- [ ] Настроить таймеры (каждые 15-30 сек)
-- [ ] Отключать при основных анимациях
+- [x] Создать `MicroAnimations` класс
+- [x] Реализовать 6 мини-жестов
+- [x] Настроить таймеры (каждые 8-20 сек)
+- [x] Отключать при основных анимациях
 
 **Файлы:**
-- `frontend/js/micro-animations.js` (новый)
+- `frontend/js/micro-animations.js` ✅
 
 ---
 
@@ -192,23 +201,24 @@
 | **Приоритет** | 🟠 P1 |
 | **Сложность** | 🟢 Easy |
 | **Время** | 1 день |
-| **Статус** | ⬜ To Do |
+| **Статус** | ✅ Done |
 
 **Эффект:** Вместо резкой смены эмоций — плавные переходы
 
 **Возможности:**
-- Плавный переход между эмоциями (0.5 сек)
-- Смешивание эмоций (60% happy + 40% surprised)
+- ✅ Плавный переход между эмоциями
+- ✅ Метод `blendTo(emotion, intensity)`
+- ✅ Метод `blendMultiple({happy: 0.6, surprised: 0.4})`
 
 **Подзадачи:**
-- [ ] Создать `EmotionBlender`
-- [ ] Заменить текущий `setEmotion` на `blendTo`
-- [ ] Добавить поддержку смешанных эмоций
-- [ ] Тестировать переходы
+- [x] Создать `EmotionBlender`
+- [x] Интегрировать в app.js
+- [x] Добавить поддержку смешанных эмоций
+- [x] Update loop для плавных переходов
 
 **Файлы:**
-- `frontend/js/emotion-blender.js` (новый)
-- `frontend/js/emotion-controller.js` (обновить)
+- `frontend/js/emotion-blender.js` ✅
+- `frontend/js/app.js` ✅ (обновлён)
 
 ---
 
@@ -261,7 +271,7 @@
 
 **Файлы:**
 - `backend/app/services/memory_service.py` (новый)
-- `backend/app/routers/chat. py` (обновить)
+- `backend/app/routers/chat.py` (обновить)
 
 ---
 
@@ -373,7 +383,7 @@
 
 ---
 
-### Task 13: Загрузка . vrma анимаций
+### Task 13: Загрузка .vrma анимаций
 
 | | |
 |---|---|
@@ -385,7 +395,7 @@
 **Цель:** Загружать готовые анимации из файлов вместо кода
 
 **Анимации для добавления:**
-- dance. vrma
+- dance.vrma
 - clap.vrma
 - sit.vrma
 - jump.vrma
@@ -576,63 +586,65 @@
 leia-assistant/
 ├── frontend/
 │   ├── js/
-│   │   ├── app. js
-│   │   ├── vrm-loader.js
-│   │   ├── animation-controller.js
-│   │   ├── emotion-controller.js
-│   │   ├── speech-handler.js
-│   │   ├── presence-detector.js
-│   │   ├── ai-service.js              # Task 1
-│   │   ├── conversation-loop.js       # Task 2
-│   │   ├── look-at-controller.js      # Task 4
-│   │   ├── micro-animations.js        # Task 5
-│   │   ├── emotion-blender.js         # Task 6
-│   │   ├── animation-library.js       # Task 13
-│   │   ├── holographic-mode.js        # Task 14
-│   │   ├── advanced-lip-sync.js       # Task 18
-│   │   └── ad-manager.js              # Task 16
+│   │   ├── app.js                       ✅
+│   │   ├── vrm-loader.js                ✅
+│   │   ├── animation-controller.js      ✅
+│   │   ├── emotion-controller.js        ✅
+│   │   ├── speech-handler.js            ✅
+│   │   ├── presence-detector.js         ✅
+│   │   ├── ai-service.js                # Task 1
+│   │   ├── conversation-loop.js         ✅ Task 2
+│   │   ├── look-at-controller.js        ✅ Task 4
+│   │   ├── micro-animations.js          ✅ Task 5
+│   │   ├── emotion-blender.js           ✅ Task 6
+│   │   ├── animation-library.js         # Task 13
+│   │   ├── holographic-mode.js          # Task 14
+│   │   ├── advanced-lip-sync.js         # Task 18
+│   │   └── ad-manager.js                # Task 16
 │   ├── admin/
-│   │   ├── dashboard.html             # Task 15
-│   │   └── dashboard.js               # Task 15
-│   ├── animations/                    # Task 13
+│   │   ├── dashboard.html               # Task 15
+│   │   └── dashboard.js                 # Task 15
+│   ├── animations/                      # Task 13
 │   │   ├── dance.vrma
 │   │   ├── clap.vrma
-│   │   └── ... 
-│   └── index.html
+│   │   └── ...
+│   └── index.html                       ✅
 │
 ├── backend/
 │   └── app/
-│       ├── main.py
+│       ├── main.py                      ✅
 │       ├── routers/
-│       │   ├── chat.py
-│       │   ├── avatar.py
-│       │   ├── speech.py
-│       │   ├── schedule.py            # Task 9
-│       │   ├── analytics.py           # Task 12
-│       │   └── ads.py                 # Task 16
+│       │   ├── chat.py                  ✅
+│       │   ├── avatar.py                ✅
+│       │   ├── speech.py                ✅
+│       │   ├── schedule.py              # Task 9
+│       │   ├── analytics.py             # Task 12
+│       │   └── ads.py                   # Task 16
 │       ├── services/
-│       │   ├── gemini_service.py
-│       │   ├── emotion_service.py
-│       │   ├── speech_service.py
-│       │   ├── tts_service.py         # Task 3
-│       │   ├── memory_service.py      # Task 8
-│       │   ├── chat_modes.py          # Task 7
-│       │   ├── analytics_service.py   # Task 12
-│       │   ├── reaction_ai_service.py # Task 17
-│       │   └── affinity_service.py    # Task 19
+│       │   ├── gemini_service.py        ✅
+│       │   ├── emotion_service.py       ✅
+│       │   ├── speech_service.py        ✅
+│       │   ├── tts_service.py           # Task 3
+│       │   ├── memory_service.py        # Task 8
+│       │   ├── chat_modes.py            # Task 7
+│       │   ├── analytics_service.py     # Task 12
+│       │   ├── reaction_ai_service.py   # Task 17
+│       │   └── affinity_service.py      # Task 19
 │       └── data/
-│           ├── jdu_context.py
-│           ├── jdu_schedule.py        # Task 9
-│           ├── jdu_navigation.py      # Task 10
-│           └── jdu_staff.py           # Task 11
+│           ├── jdu_context.json         ✅
+│           ├── schedule.json            ✅
+│           ├── staff.json               ✅
+│           ├── jdu_schedule.py          # Task 9
+│           ├── jdu_navigation.py        # Task 10
+│           └── jdu_staff.py             # Task 11
 │
-├── README.md
-├── README.en.md
-├── README.ja.md
-├── presentation. md
-├── presentation.en.md
-├── presentation.ja.md
-└── Tasks.md
+├── README.md                            ✅
+├── README.en.md                         ✅
+├── README.ja.md                         ✅
+├── presentation.md                      ✅
+├── presentation.en.md                   ✅
+├── presentation.ja.md                   ✅
+└── Tasks.md                             ✅
 ```
 
 ---
@@ -643,29 +655,29 @@ leia-assistant/
 
 | Этап | Задач | Готово | Прогресс |
 |------|-------|--------|----------|
-| 🔴 CRITICAL | 3 | 0 | ⬜⬜⬜⬜⬜ 0% |
-| 🟠 HIGH | 5 | 0 | ⬜⬜⬜⬜⬜ 0% |
+| 🔴 CRITICAL | 3 | 1 | ⬛⬜⬜⬜⬜ 33% |
+| 🟠 HIGH | 5 | 3 | ⬛⬛⬛⬜⬜ 60% |
 | 🟡 MEDIUM | 5 | 0 | ⬜⬜⬜⬜⬜ 0% |
 | 🟢 LOW | 6 | 0 | ⬜⬜⬜⬜⬜ 0% |
-| **TOTAL** | **19** | **0** | **0%** |
+| **TOTAL** | **19** | **4** | **21%** |
 
 ---
 
 ## 🏃 Спринты
 
-### Sprint 1 (Текущий): MVP Critical
+### Sprint 1: MVP Critical ✅ Частично
 **Дата:** 9-15 Декабря 2025
 
-- [ ] Task 1: Локальный LLM Fallback
-- [ ] Task 2: Natural Conversation Loop
+- [x] Task 2: Natural Conversation Loop ✅
+- [ ] Task 1:  Локальный LLM Fallback (отложен)
 - [ ] Task 3: Улучшить узбекский TTS
 
-### Sprint 2: UX & Живость
+### Sprint 2: UX & Живость ✅ Завершён
 **Дата:** 16-22 Декабря 2025
 
-- [ ] Task 4: Взгляд за курсором
-- [ ] Task 5: Микро-анимации
-- [ ] Task 6: Плавные переходы эмоций
+- [x] Task 4: Взгляд за курсором ✅
+- [x] Task 5: Микро-анимации ✅
+- [x] Task 6: Плавные переходы эмоций ✅
 - [ ] Task 7: Режимы чата
 - [ ] Task 8: Память контекста
 
@@ -704,7 +716,7 @@ leia-assistant/
 ### Библиотеки
 - [@pixiv/three-vrm](https://github.com/pixiv/three-vrm) — VRM для Three.js
 - [@pixiv/three-vrm-animation](https://github.com/pixiv/three-vrm-animation) — VRM анимации
-- [@xenova/transformers](https://github.com/xenova/transformers. js) — локальные AI модели
+- [@xenova/transformers](https://github.com/xenova/transformers.js) — локальные AI модели
 - [GSAP](https://greensock.com/gsap/) — анимации
 
 ### Документация
@@ -715,4 +727,4 @@ leia-assistant/
 
 ---
 
-*Последнее обновление:  Декабрь 2025*
+*Последнее обновление: 21 Декабря 2025*
