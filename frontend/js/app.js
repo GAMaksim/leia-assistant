@@ -3,6 +3,10 @@ import { AnimationController } from './animation-controller.js';
 import { EmotionController } from './emotion-controller.js';
 import { SpeechHandler } from './speech-handler.js';
 import { PresenceDetector } from './presence-detector.js';
+import { LookAtController } from './look-at-controller.js';
+import { MicroAnimations } from './micro-animations.js';
+import { ConversationLoop } from './conversation-loop.js';
+import { EmotionBlender } from './emotion-blender.js';  
 
 class LEIAApp {
     constructor() {
@@ -17,6 +21,10 @@ class LEIAApp {
         this.emotionController = null;
         this.speechHandler = null;
         this.presenceDetector = null;
+        this.lookAtController = null;
+        this.microAnimations = null;
+        this.conversationLoop = null;
+        this.emotionBlender = null;
         
         this.init();
     }
@@ -43,6 +51,8 @@ class LEIAApp {
                 this.onUserDetected();
             }
         });
+
+        this.conversationLoop = new ConversationLoop(this);
         
         console.log('✅ LEIA App initialized! ');
         this.setStatus('ready');
@@ -58,6 +68,11 @@ class LEIAApp {
                 await this.vrmLoader.loadModel('models/leia.vrm');
                 this.animationController = new AnimationController(this.vrmLoader.vrm);
                 this.emotionController = new EmotionController(this.vrmLoader.vrm);
+                this.lookAtController = new LookAtController(this.vrmLoader.vrm);
+                this.microAnimations = new MicroAnimations(this.vrmLoader.vrm, this.animationController);
+                this.emotionBlender = new EmotionBlender(this.vrmLoader.vrm);
+                this.startUpdateLoop();
+
                 console.log('✅ VRM model loaded! ');
             } catch (e) {
                 console.log('ℹ️ VRM model not found, running in demo mode');
@@ -65,6 +80,18 @@ class LEIAApp {
         } catch (error) {
             console.error('Failed to initialize VRM:', error);
         }
+    }
+
+    startUpdateLoop() {
+        const update = () => {
+            // Обновить взгляд за курсором
+            if (this.lookAtController) {
+                this.lookAtController.update();
+            }
+            
+            requestAnimationFrame(update);
+        };
+        update();
     }
 
     setupEventListeners() {
@@ -89,6 +116,28 @@ class LEIAApp {
                 this.sendMessage();
             }
         });
+
+        document.getElementById('conversation-btn')?.addEventListener('click', () => {
+            this.toggleConversationLoop();
+        });
+    }
+
+    toggleConversationLoop() {
+        if (! this.conversationLoop) return;
+        
+        if (this.conversationLoop.isActive) {
+            this.conversationLoop.stop();
+        } else {
+            this.conversationLoop.start();
+        }
+    }
+
+    setEmotion(emotion) {
+        if (this.emotionBlender) {
+            this.emotionBlender.blendTo(emotion);
+        } else if (this.emotionController) {
+            this.emotionController.setEmotion(emotion);
+        }
     }
 
     updateDateTime() {

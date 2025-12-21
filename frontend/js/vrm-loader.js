@@ -88,10 +88,18 @@ export class VRMLoader {
         requestAnimationFrame(() => this.animate());
         
         const delta = this.clock.getDelta();
+
+        if (this.mixer) {
+            this.mixer.update(delta);
+        }
         
         // Update VRM
         if (this.vrm) {
             this.vrm.update(delta);
+        }
+
+        if (window.leiaApp?.lookAtController) {
+            window.leiaApp.lookAtController.applyHeadRotation();
         }
         
         this.renderer.render(this.scene, this.camera);
